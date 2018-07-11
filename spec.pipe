@@ -1,0 +1,50 @@
+h1|Pipe Markup Language Specification
+[i|Version 0.1]
+
+This specification describes the rules of the language. 
+
+h2|Syntax
+\[ denotes the start of an element, \] denotes the end. The brackets can be omitted if the element begins on a new line and ends with a newline character. The brackets can also be omitted inside text if no r|properties are declared. The contents then become the first word immediately following the \|. If the word is ended by one or more dots or commas, these are not included. It is allowed to bridge words by using an r|explicit_space, in this case all bridged words and spaces are counted.
+
+\| denotes the start of element contents. Everything after the \| up to the end of the element are contents of the element.
+
+The first word after the start of the element is the element name.
+
+Properties of an element are declared after the element name and must be preceded by a space character. A property consists of a name and one or several arguments. The arguments are all enclosed in parenthesis and separated by commas. Arguments only have values and which argument is which is determined by order. An element can have a default property and if only the first argument of the default property is declared, the name of the property and the parenthesis can be omitted.
+
+
+
+h2|Text
+Text that is not enclosed in another element is implicitly a r|paragraph. An implicit r|paragraph containing a newline character automatically ends the current paragraph and starts a new one, unless there is an [r|explicit newline] somewhere in between where the current paragraph is and the new one would be.
+
+h2|Spaces
+Spaces at the beginning of a line are discarded. More spaces than one in succession are discarded. Spaces at the beginning and at the end of a r|paragraph are discarded. Explicit spaces can be inserted using the [r|explicit space] element. r|explicit_space 
+
+h2|Newlines
+Newlines are denoted solely by the \n character, all \r character are discarded. Newlines are only used to determine where elements end. Use [r expnl|explicit newlines] to insert new lines in to text.
+
+
+
+h2|Elements
+An element has a [i|name] 
+
+h3|Explicit space
+b|\[_\] or b|_
+All explicit spaces are read and rendered as spaces. In languages that only have single spaces, explicit spaces are used in rendering. In HTML for example, &nbsp; are used.
+
+h3 ref(expnl, explicit newline, explicit newlines)|Explicit newline
+b|\[n\] or b|\<\|
+
+
+
+h3|Header
+[b|\[h[i|x]\]]
+The header element consists of an [b|h] and a size describing the size of the header. 1 is the largest size and 6 is the smallest. The header element has as default property the reference property. If no reference property is defined, the text of the header is an implicit reference property.
+
+h3|paragraph
+[b|\[p\]]
+
+
+h3|Reference
+[b|\[r\]]
+A reference element is denoted by an [b|r] and has as default property the reference property. If no reference property is defined, the text of the reference is an implicit reference property. The reference element should be rendered as a link to the first element with the same reference property. References are case insensitive.

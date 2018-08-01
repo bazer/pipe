@@ -1,0 +1,19 @@
+pipe
+:name(standard)
+:version(0.1)
+:encoding(utf-8)
+
+[element
+    :name(h)
+    :type(block)
+    :size(1,2,3,4,5,6,+,-,=)
+    :properties([property
+        :name(ref)
+        :arguments(list)
+        :optional(true)
+        :default(true)
+    ])|
+    Standard header, sizes 1 to 6. Use + to increase one size from the previous header and - to decrease one size. Use = or leave empty to use the previous size.
+    1 is the largest size and 6 is the smallest. The header element has as default property the reference property. If no reference property is defined, the text of the header is an implicit reference property.
+]
+

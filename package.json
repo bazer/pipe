@@ -1,0 +1,24 @@
+{
+  "name": "pipe-markup",
+  "version": "0.1.0",
+  "description": "Pipe Markup Language",
+  "main": "lib/index",
+  "types": "lib/index",
+  "repository": "https://github.com/bazer/pipe.git",
+  "author": "Sebastian Öberg <sebastian.oberg@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/core-js": "^2.5.0",
+    "@types/node": "^10.5.5",
+    "nodemon": "^1.18.3",
+    "ts-node": "^7.0.0",
+    "typescript": "^3.0.1"
+  },
+  "scripts": {
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
+  },
+  "dependencies": {
+    "core-js": "^2.5.7"
+  }
+}

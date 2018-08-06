@@ -3,6 +3,8 @@ import { ASTBase, ParseError, ParseErrorType, ASTMixin } from './astbase';
 import AST from './ast';
 import { HtmlBase } from './htmlbase';
 import { ASTElementLayout } from './elements';
+import { JSDOM } from "jsdom";
+const { document } = (new JSDOM(`...`)).window;
 
 export function ASTHtmlEncoderMixin<T extends ASTMixin<elements.ASTElement>>(mixinClass: T) {
     return class extends mixinClass {

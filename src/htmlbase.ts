@@ -1,7 +1,8 @@
 import { ASTBase, ASTMixin } from "./astbase";
 import { elements } from ".";
 import 'core-js/es6/string';
-
+import { JSDOM } from "jsdom";
+const { document } = (new JSDOM(`...`)).window;
 
 // export class ASTHtmlEncoderMixin extends elements.ASTElement
 // {

@@ -1,8 +1,8 @@
-pipe
+[pipe
 :using(standard, index)
 :name(Pipe Markup Language Specification)
 :version(0.1)
-:encoding(utf-8)
+:encoding(utf-8)]
 
 h1|Pipe Markup Language Specification
 [i|Version 0.1]

@@ -1,5 +1,5 @@
 {
-  "name": "pipe-markup",
+  "name": "pipeml",
   "version": "0.1.0",
   "description": "Pipe Markup Language",
   "main": "lib/index",
@@ -7,8 +7,14 @@
   "repository": "https://github.com/bazer/pipe.git",
   "author": "Sebastian Öberg <sebastian.oberg@gmail.com>",
   "license": "MIT",
+  "preferGlobal": true,
+  "bin": {
+    "pipe-check": "lib/cli/check.js",
+    "pipe-html": "lib/cli/html.js"
+  },
   "devDependencies": {
     "@types/core-js": "^2.5.0",
+    "@types/jsdom": "^11.0.6",
     "@types/node": "^10.5.5",
     "nodemon": "^1.18.3",
     "ts-node": "^7.0.0",
@@ -19,6 +25,8 @@
     "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
   },
   "dependencies": {
-    "core-js": "^2.5.7"
+    "commander": "^2.17.0",
+    "core-js": "^2.5.7",
+    "jsdom": "^11.12.0"
   }
 }

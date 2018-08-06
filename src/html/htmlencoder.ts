@@ -1,8 +1,8 @@
-import * as elements from './elements';
-import { ASTBase, ParseError, ParseErrorType, ASTMixin } from './astbase';
-import AST from './ast';
+import * as elements from '../elements/elements';
+import { ASTBase, ParseError, ParseErrorType, ASTMixin } from '../ast/astbase';
+import AST from '../ast/ast';
 import { HtmlBase } from './htmlbase';
-import { ASTElementLayout } from './elements';
+import { ASTElementLayout } from '../elements/elements';
 import { JSDOM } from "jsdom";
 const { document } = (new JSDOM(`...`)).window;
 

@@ -1,9 +1,9 @@
 import { Lexer, TokenType, Token } from "./lexer";
 import { InputStream } from "./inputstream";
-import AST from "./ast";
-import { elements } from ".";
-import { IParserNode, ParserNode, ParserNodeProperty } from "./parsernode";
-import { ASTBase, ASTMixin } from "./astbase";
+import AST from "../ast/ast";
+import { elements } from "..";
+import { IParserNode, ParserNode, ParserNodeProperty } from "../shared/parsernode";
+import { ASTBase, ASTMixin } from "../ast/astbase";
 
 export class Parser extends ASTBase {
     lexer: Lexer;

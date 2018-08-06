@@ -1,7 +1,7 @@
-import { ASTBase } from "./astbase";
-import { elements } from ".";
-import { IParserNode, ParserNode, IParserNodeProperty, ParserNodeProperty } from "./parsernode";
-import { ASTElementLayout } from "./elements";
+import { ASTBase } from "../ast/astbase";
+import { elements } from "..";
+import { IParserNode, ParserNode, IParserNodeProperty, ParserNodeProperty } from "../shared/parsernode";
+import { ASTElementLayout } from "../elements/elements";
 
 export class Writer extends ASTBase {
     constructor() {

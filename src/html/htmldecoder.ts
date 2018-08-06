@@ -1,7 +1,7 @@
-import * as elements from './elements';
-import { AST } from './ast';
-import { ASTElementLayout } from './elements';
-import { SearchNode, ParseResult, ASTBase, ASTMixin } from './astbase';
+import * as elements from '../elements/elements';
+import { AST } from '../ast/ast';
+import { ASTElementLayout } from '../elements/elements';
+import { SearchNode, ParseResult, ASTBase, ASTMixin } from '../ast/astbase';
 import { HtmlBase } from './htmlbase';
 
 

@@ -1,6 +1,6 @@
-import { elements } from ".";
-import { IParserNode, ParserNode } from "./parsernode";
-import { ASTElementLayout, Dictionary } from "./elements";
+import { elements } from "..";
+import { IParserNode, ParserNode } from "../shared/parsernode";
+import { ASTElementLayout, Dictionary } from "../elements/elements";
 
 export enum ParseErrorType {
     UnallowedNesting,

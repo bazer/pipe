@@ -1,4 +1,4 @@
-import AST from "./ast";
+import AST from "../ast/ast";
 
 export enum ASTElementLayout {
     Inline,

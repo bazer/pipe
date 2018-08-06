@@ -1,6 +1,6 @@
-import * as elements from "./elements";
-import { ASTElementLayout } from "./elements";
-import { ParserNode } from "./parsernode";
+import * as elements from "../elements/elements";
+import { ASTElementLayout } from "../elements/elements";
+import { ParserNode } from "../shared/parsernode";
 import { ParseResult, ASTBase, ASTMixin } from "./astbase";
 
 export class AST extends ASTBase {

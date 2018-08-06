@@ -2,7 +2,7 @@
 
 import program from 'commander';
 import fs from 'fs';
-import { Parser } from '../parser';
+import { Parser } from '../reader/parser';
 // Require logic.js file and extract controller functions using JS destructuring assignment
 
 program

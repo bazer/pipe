@@ -1,5 +1,5 @@
-import { ASTBase, ASTMixin } from "./astbase";
-import { elements } from ".";
+import { ASTBase, ASTMixin } from "../ast/astbase";
+import { elements } from "..";
 import 'core-js/es6/string';
 import { JSDOM } from "jsdom";
 const { document } = (new JSDOM(`...`)).window;

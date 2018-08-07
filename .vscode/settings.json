@@ -6,5 +6,10 @@
         "text",
     ],
     "mocha.files.glob": "tests/**/*.ts",
-    "mocha.requires": ["ts-node/register"]
+    "mocha.requires": [
+        "ts-node/register"
+    ],
+    "mocha.coverage": {
+        "enable": false,
+    }
 }

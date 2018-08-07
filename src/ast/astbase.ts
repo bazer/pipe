@@ -91,7 +91,7 @@ export abstract class ASTBase {
             element.explicit = node.explicit;
 
         if (element instanceof elements.ASTElementWithValue)
-            element.value = node.value;
+            element.value = node.value || ""; 
 
         if (element instanceof elements.ASTElementWithAmount)
             element.amount = node.amount;
@@ -207,7 +207,7 @@ export abstract class ASTBase {
         return count;
     }
 
-    protected error(msg) {
-        throw new Error(msg);
+    protected error(msg: string) {
+        return new Error(msg);
     }
 }

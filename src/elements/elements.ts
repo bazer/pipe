@@ -106,8 +106,12 @@ export abstract class ASTElement implements IASTElement {
 }
 
 export abstract class ASTElementWithValue extends ASTElement {
-    constructor(name: string, public value = "", layout: ASTElementLayout = ASTElementLayout.NewLine) {
+    public value: string;
+
+    constructor(name: string, value?: string | null, layout: ASTElementLayout = ASTElementLayout.NewLine) {
         super(name, layout);
+
+        this.value = value || "";
     }
 
     public searchAndReplace(searchFor: string, newValue: string){
@@ -166,7 +170,7 @@ export class Fragment extends ASTElementWithValue {
 }
 
 export class Comment extends ASTElementWithValue {
-    constructor(value?: string) {
+    constructor(value?: string | null) {
         super("#", value);
     }
 }
@@ -261,21 +265,16 @@ export class Bold extends ASTElement {
 }
 export class Image extends ASTElement {
     public url() {
-        let hash = this.getArgument("hash");
-        if(hash != null) {
-            return "/api/publik/Img?h="+hash;
-        }
         return this.getArgument("url");
     }
 
-    constructor(url?: string, hash?: string) {
+    constructor(url?: string) {
         super("img", ASTElementLayout.Inline);
         this.type = ASTElementType.Content;
         this.canHaveChildren = false;
+
         if(url)
             this.setArgument("url", url);
-        if(hash)
-            this.setArgument("hash", hash);
     }
 }
 
@@ -339,7 +338,7 @@ export class Text extends ASTElement {
     
 }
 export class Word extends ASTElementWithValue {
-    constructor(value?: string) {
+    constructor(value?: string | null) {
         super("w", value, ASTElementLayout.Inline);
         this.type = ASTElementType.Text;
     }

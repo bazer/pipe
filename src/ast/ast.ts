@@ -1,12 +1,46 @@
 import * as elements from "../elements/elements";
 import { ASTElementLayout } from "../elements/elements";
-import { ParserNode } from "../shared/parsernode";
+import { ParserNode, IParserNode } from "../shared/parsernode";
 import { ParseResult, ASTBase, ASTMixin } from "./astbase";
+import { Parser } from "../reader/parser";
 
 export class AST extends ASTBase {
 
     constructor(extensionElements: (ASTMixin<elements.ASTElement>)[] = []) {
         super(extensionElements);
+    }
+
+    public decode(input: string): elements.ASTElement[] {
+        if (input == null)
+            return [];
+
+        // if (typeof input === "string")
+        let parser = new Parser(input);
+        let nodes = parser.parse();
+
+        // console.log(input);
+
+        var ast = new AST(this.extensionElements);
+        var list = nodes.map(x => this.getASTElements(x));
+        list = list.flatMap(x => ast.removeUnknownElements(x));
+        list = list.flatMap(x => ast.removeComments(x));
+        list = ast.formatText(list);
+        list = ast.removeNewLines(list);
+
+        return list;
+    }
+
+    protected getASTElements(input: IParserNode): elements.ASTElement {
+        if (!this.isASTElementType(input)) {
+            throw this.error(`Unknown element '${input.name}'`);
+        }
+
+        let element = this.getASTElement(input);
+        input.children.forEach(node => {
+            element.children.push(this.getASTElements(node));
+        });
+
+        return element;
     }
 
     public getNumChars(elements: elements.ASTElement[]) {

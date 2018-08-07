@@ -13,11 +13,11 @@ export enum TokenType {
 
 export interface Token {
     type: TokenType,
-    value?: string
+    value: string
 }
 
 export class Lexer {
-    current: Token = null;
+    current: Token | null = null;
     reportPunctuation = false;
 
     constructor(private input: InputStream) {
@@ -25,7 +25,7 @@ export class Lexer {
     }
 
 
-    protected readNext(): Token {
+    protected readNext(): Token | null {
         this.readWhile(ch => this.isWhitespace(ch));
         
         if (this.input.eof()) 
@@ -105,7 +105,7 @@ export class Lexer {
         || this.isSpace(ch));
     }
 
-    isEscape(ch: string | null) {
+    isEscape(ch: string) {
         return "\\".indexOf(ch) >= 0;
     }
 
@@ -170,15 +170,21 @@ export class Lexer {
     next() {
         var tok = this.current;
         this.current = null;
-        return tok || this.readNext();
+        let next = tok || this.readNext();
+
+        if (next == null){
+            throw this.croak("Encountered null token");
+        }
+
+        return next;
     }
 
     eof() {
         return this.peek() == null;
     }
 
-    public croak(msg) {
-        this.input.croak(msg);
+    public croak(msg: string) {
+        return this.input.croak(msg);
     }
 }
 

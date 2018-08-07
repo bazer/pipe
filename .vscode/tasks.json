@@ -7,7 +7,7 @@
             "type": "gulp",
             "task": "default",
             "problemMatcher": [
-                "$gulp-tsc"
+                "$tsc",
             ],
             "group": {
                 "kind": "build",

@@ -19,8 +19,8 @@ program
     fs.readFile(file, 'utf-8', (err, data) => {
       //console.log(data);
 
-      let parser = new Parser();
-      let nodes = parser.parse(data);
+      let parser = new Parser(data);
+      let nodes = parser.parse();
 
       console.log(nodes);
     });

@@ -80,7 +80,7 @@ export class HtmlDecoder extends HtmlBase {
 
                 if (node instanceof HTMLElement) {
                     if (element.layout == ASTElementLayout.NewLine) {
-                        if (node.style.textAlign && allowedTextAlign.some(x => x == node.style.textAlign.toLowerCase())) {
+                        if (node.style.textAlign && allowedTextAlign.some(x => node.style.textAlign != null && x == node.style.textAlign.toLowerCase())) {
                             element.setAlign(node.style.textAlign.toLowerCase());
                         }
                     }

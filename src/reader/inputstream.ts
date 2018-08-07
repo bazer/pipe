@@ -29,8 +29,8 @@ export class InputStream {
         return this.peek() == "";
     }
 
-    public croak(msg) {
-        throw new Error(msg + " (" + this.line + ":" + this.col + ")");
+    public croak(msg: string) {
+        return new Error(msg + " (" + this.line + ":" + this.col + ")");
     }
 }
 

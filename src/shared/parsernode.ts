@@ -31,7 +31,7 @@ export class ParserNode implements IParserNode {
     public amount: number = 1;
     public explicit: boolean;
 
-    constructor(name: string, value?: string, explicit = false) {
+    constructor(name: string, value?: string | null, explicit = false) {
         this.name = name.toLowerCase();
         this.value = value || null;
         this.explicit = explicit;

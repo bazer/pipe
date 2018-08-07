@@ -87,7 +87,7 @@ export class Writer extends ASTBase {
     }
 
     protected getParserNodes(elements: elements.ASTElement[]) {
-        let lastElement = null; //elements.length > 0 ? elements[0] : null;
+        let lastElement: elements.ASTElement | null = null; //elements.length > 0 ? elements[0] : null;
         let list = elements.reduce((acc: ParserNode[], element) => {
             let node = this.resolveParserNode(element);
             node.children = this.getParserNodes(element.children);
@@ -137,7 +137,7 @@ export class Writer extends ASTBase {
         var text = "";
         node.children.forEach(child => {
             if (child.name == "w") {
-                text += child.value
+                text += (child.value || "")
                     .split("\\").join("\\\\")
                     .split("[").join("\\[")
                     .split("]").join("\\]");

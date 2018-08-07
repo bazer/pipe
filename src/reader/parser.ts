@@ -5,48 +5,26 @@ import { elements } from "..";
 import { IParserNode, ParserNode, ParserNodeProperty } from "../shared/parsernode";
 import { ASTBase, ASTMixin } from "../ast/astbase";
 
-export class Parser extends ASTBase {
-    lexer: Lexer;
+export class Parser {
+    protected lexer: Lexer;
 
-    constructor(extensionElements: (ASTMixin<elements.ASTElement>)[] = []) {
-        super(extensionElements);
+    constructor(input: string) {
+        this.lexer = new Lexer(new InputStream(input));
     }
 
-    public decode(input: string | IParserNode[]): elements.ASTElement[] {
-        if (input == null)
-            return [];
+    public parse(): IParserNode[] {
+        var nodes: IParserNode[] = [];
 
-        if (typeof input === "string")
-            input = this.parse(input);
+        while (!this.lexer.eof()) {
+            var token = this.lexer.peek();
 
-        input = this.parseText(input);
-
-        // console.log(input);
-
-        var ast = new AST(this.extensionElements);
-        var list = input.map(x => this.getASTElements(x));
-        list = list.flatMap(x => ast.removeUnknownElements(x));
-        list = list.flatMap(x => ast.removeComments(x));
-        list = ast.formatText(list);
-        list = ast.removeNewLines(list);
-
-        return list;
-    }
-
-    protected getASTElements(input: IParserNode): elements.ASTElement {
-        if (!this.isASTElementType(input)) {
-            this.error(`Unknown element '${input.name}'`);
+            nodes.push(this.parseNode())
         }
 
-        let element = this.getASTElement(input);
-        input.children.forEach(node => {
-            element.children.push(this.getASTElements(node));
-        });
-
-        return element;
+        return this.parseText(nodes);
     }
 
-    public parseText(nodes: ParserNode[]): ParserNode[] {
+    protected parseText(nodes: ParserNode[]): ParserNode[] {
         var textNodes: ParserNode[] = [];
         var list = nodes.reduce((acc: ParserNode[], node) => {
             if (node.name == "w" || node.name == "_") {
@@ -78,21 +56,7 @@ export class Parser extends ASTBase {
 
         return list;
     }
-
-    public parse(input: string): IParserNode[] {
-        this.lexer = new Lexer(new InputStream(input));
-
-        var nodes: IParserNode[] = [];
-
-        while (!this.lexer.eof()) {
-            var token = this.lexer.peek();
-
-            nodes.push(this.parseNode())
-        }
-
-        return nodes;
-    }
-
+    
     protected parseNode(): IParserNode {
         var node: IParserNode | null = null;
 
@@ -106,7 +70,7 @@ export class Parser extends ASTBase {
             if (nodeNameSplit.length > 1 && parseInt(nodeNameSplit[1]) > 1)
                 node.amount = parseInt(nodeNameSplit[1]);
 
-            let lastWord: Token = null;
+            let lastWord: Token | null = null;
             while (!this.lexer.eof() && !this.peekIsPunctuation("|") && !this.peekIsNewLine() && !this.peekIsElementEnd()) {
                 if (token.type === TokenType.Word) {
                     lastWord = token;
@@ -114,6 +78,10 @@ export class Parser extends ASTBase {
 
                 if (this.peekIsPropertyStart()) {
                     token = this.lexer.next();
+
+                    if (lastWord == null) {
+                        throw this.croak("Token is not a word");
+                    }
 
                     let property = new ParserNodeProperty(lastWord.value);
                     node.properties.push(property);
@@ -155,12 +123,12 @@ export class Parser extends ASTBase {
             return new ParserNode("w", token.value);
         }
         else
-            this.croak(`Unexpected token type '${token.type}'`);
+            throw this.croak(`Unexpected token type '${token.type}'`);
 
         while (!this.lexer.eof()) {
-            token = this.lexer.peek();
+            let peek = this.lexer.peek();
 
-            if (token.type == TokenType.ElementEnd) {
+            if (peek && peek.type == TokenType.ElementEnd) {
                 this.lexer.next();
                 return node;
             }
@@ -198,7 +166,7 @@ export class Parser extends ASTBase {
     }
 
     protected croak(msg: string) {
-        this.lexer.croak(msg);
+        return this.lexer.croak(msg);
     }
 }
 

@@ -24,11 +24,11 @@ export abstract class HtmlBase extends ASTBase {
         super(extensionElements);
     }
 
-    public static parseText(text: string) {
+    public static parseText(text: string | null) {
         let textElement = new elements.Text();
         let savedWord = "";
 
-        textElement.children = text.split("").reduce((acc: elements.ASTElement[], char) => {
+        textElement.children = (text || "").split("").reduce((acc: elements.ASTElement[], char) => {
             let space = char === " ";
             let explicitSpace = char === '\u00A0';
             let newLine = char === "\n" || char === "\r" || char === "\r\n";
@@ -58,8 +58,8 @@ export abstract class HtmlBase extends ASTBase {
             textElement.children.push(new elements.Word(savedWord));
         }
 
-        if (textElement.children.length == 0)
-            return null;
+        // if (textElement.children.length == 0)
+        //     return null;
 
         return textElement;
     }
@@ -96,12 +96,8 @@ export abstract class HtmlBase extends ASTBase {
             case "img": {
                 let img = (html as HTMLImageElement);
                 let src = img.src;
-                let hash = null;
-                if(img.src.indexOf('/api/publik/Img?h') != -1) {
-                    hash = img.src.split('Img?h=')[1];
-                    src = null;
-                }
-                return new elements.Image(src, hash);
+                
+                return new elements.Image(src);
             }
             case "#text": return HtmlBase.parseText(html.nodeValue);
             case "br": return new elements.NewLine(1, true);
@@ -185,7 +181,9 @@ export abstract class HtmlBase extends ASTBase {
             case "hr": return document.createElement('hr');
             case "c": {
                 let f = document.createElement('font');
-                f.setAttribute('color', (element as elements.Color).color());
+                let color = (element as elements.Color).color();
+                if (color)
+                    f.setAttribute('color', color);
                 return f;
             }
             case "b": return document.createElement('b');
@@ -195,11 +193,13 @@ export abstract class HtmlBase extends ASTBase {
 
                 var h = (element as elements.Hyperlink);
 
-                if (h.getUrl() && h.getUrl().length > 0)
-                    a.setAttribute('href', h.getUrl());
+                let url = h.getUrl();
+                if (url && url.length > 0)
+                    a.setAttribute('href', url);
 
-                if (h.getTarget() && h.getTarget().length > 0)
-                    a.setAttribute('target', h.getTarget());
+                let target = h.getTarget();
+                if (target && target.length > 0)
+                    a.setAttribute('target', target);
 
                 a.style.cursor = "text";
 
@@ -208,7 +208,10 @@ export abstract class HtmlBase extends ASTBase {
 
             case "img": {
                 let e = document.createElement('img');
-                e.setAttribute('src', (element as elements.Image).url());
+                let url = (element as elements.Image).url();
+                if (url)
+                    e.setAttribute('src', url);
+
                 return e;
             };
             case "n": return document.createElement('br');
@@ -227,7 +230,6 @@ export abstract class HtmlBase extends ASTBase {
         if (element instanceof elements.Unknown)
             return document.createElement('span');
 
-        this.error(`Unknown element '${element.elementName}'`);
-        return null;
+        throw this.error(`Unknown element '${element.elementName}'`);
     }
 }

@@ -1,6 +1,6 @@
 import { elements } from "..";
 import { IParserNode, ParserNode } from "../shared/parsernode";
-import { ASTElementLayout, Dictionary } from "../elements/elements";
+import { ASTElementLayout } from "../elements/elements";
 
 export enum ParseErrorType {
     UnallowedNesting,
@@ -32,15 +32,15 @@ export class ParseResult {
 
 export type ASTMixin<T> = new (...args: any[]) => T;
 
-function ASTElementMixin<T extends ASTMixin<{}>>(mixinClass: T) {
-    return class extends mixinClass {
-        _tag: string;
-        constructor(...args: any[]) {
-            super(...args);
-            this._tag = "";
-        }
-    }
-}
+// function ASTElementMixin<T extends ASTMixin<{}>>(mixinClass: T) {
+//     return class extends mixinClass {
+//         _tag: string;
+//         constructor(...args: any[]) {
+//             super(...args);
+//             this._tag = "";
+//         }
+//     }
+// }
 
 export abstract class ASTBase {
 

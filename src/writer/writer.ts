@@ -1,6 +1,6 @@
 import { ASTBase } from "../ast/astbase";
 import { elements } from "..";
-import { IParserNode, ParserNode, IParserNodeProperty, ParserNodeProperty } from "../shared/parsernode";
+import { ParserNode, IParserNodeProperty, ParserNodeProperty } from "../shared/parsernode";
 import { ASTElementLayout } from "../elements/elements";
 
 export class Writer extends ASTBase {
@@ -39,7 +39,7 @@ export class Writer extends ASTBase {
                 let children = this.encodeNodes(node.children, numTabsChildren);
                 let delimiter = node.children.length > 0 && node.children[0].name === "n" && !node.children[0].explicit ? "" : "|";
                 let args = this.getPropertiesString(node.properties);
-                let value = node.value || "";
+                // let value = node.value || "";
                 let amount = node.amount || 1;
 
                 let text = name;

@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\bin\\cli\\html",
+            "program": "${workspaceFolder}\\bin\\src\\cli\\html",
             "args": [
                 "convert",
                 ".\\test\\simple.pipe",

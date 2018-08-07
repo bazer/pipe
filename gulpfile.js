@@ -29,7 +29,7 @@ function clean(cb) {
 }
 
 function watch() {
-    return gulp.watch('src/**/*.ts', gulp.series(build));
+    return gulp.watch(['src/**/*.ts', 'tests/**/*.ts'], gulp.series(build));
 }
 
 exports.clean = clean;

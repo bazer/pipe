@@ -17,7 +17,8 @@ program
   .description('Check for errors')
   .action((file) => {
     fs.readFile(file, 'utf-8', (err, data) => {
-      //console.log(data);
+      if (err)
+        console.log(err);
 
       let parser = new Parser(data);
       let nodes = parser.parse();

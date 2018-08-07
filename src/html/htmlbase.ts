@@ -144,7 +144,7 @@ export abstract class HtmlBase extends ASTBase {
 
     public getHtmlText(textElement: elements.Text) {
         var text = "";
-        var list = textElement.children.forEach(child => {
+        textElement.children.forEach(child => {
             if (child instanceof elements.Word) {
                 text += child.value;
             }

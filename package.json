@@ -2,25 +2,31 @@
   "name": "pipeml",
   "version": "0.1.0",
   "description": "Pipe Markup Language",
-  "main": "lib/index",
-  "types": "lib/index",
+  "main": "bin/src/index",
+  "types": "bin/src/index",
   "repository": "https://github.com/bazer/pipe.git",
   "author": "Sebastian Öberg <sebastian.oberg@gmail.com>",
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
-    "pipe-check": "lib/cli/check.js",
-    "pipe-html": "lib/cli/html.js"
+    "pipe-check": "bin/src/cli/check.js",
+    "pipe-html": "bin/src/cli/html.js"
   },
   "devDependencies": {
     "@types/core-js": "^2.5.0",
     "@types/jsdom": "^11.0.6",
     "@types/node": "^10.5.5",
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.5",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0-alpha.3",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.1",
+    "mocha": "^5.2.0",
+    "mochawesome": "^3.0.3",
+    "chai": "^4.1.2",
+    "ts-node": "^7.0.0"
   },
   "dependencies": {
     "commander": "^2.17.0",

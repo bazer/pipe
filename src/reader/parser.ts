@@ -1,9 +1,6 @@
 import { Lexer, TokenType, Token } from "./lexer";
 import { InputStream } from "./inputstream";
-import AST from "../ast/ast";
-import { elements } from "..";
 import { IParserNode, ParserNode, ParserNodeProperty } from "../shared/parsernode";
-import { ASTBase, ASTMixin } from "../ast/astbase";
 
 export class Parser {
     protected lexer: Lexer;
@@ -16,7 +13,7 @@ export class Parser {
         var nodes: IParserNode[] = [];
 
         while (!this.lexer.eof()) {
-            var token = this.lexer.peek();
+            // var token = this.lexer.peek();
 
             nodes.push(this.parseNode())
         }

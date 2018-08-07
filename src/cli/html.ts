@@ -2,7 +2,6 @@
 
 import program from 'commander';
 import fs from 'fs';
-import { Parser } from '../reader/parser';
 import { HtmlEncoder } from '../html/htmlencoder';
 import AST from '../ast/ast';
 // Require logic.js file and extract controller functions using JS destructuring assignment
@@ -19,7 +18,8 @@ program
   .description('Convert to and from HTML')
   .action((file, newFile) => {
     fs.readFile(file, 'utf-8', (err, data) => {
-      //console.log(data);
+      if (err)
+        console.log(err);
 
       let ast = new AST();
       let astNodes = ast.decode(data);

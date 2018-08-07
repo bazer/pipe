@@ -1,5 +1,5 @@
 import * as elements from '../elements/elements';
-import { ASTBase, ParseError, ParseErrorType, ASTMixin } from '../ast/astbase';
+import { ASTMixin } from '../ast/astbase';
 import AST from '../ast/ast';
 import { HtmlBase } from './htmlbase';
 import { ASTElementLayout } from '../elements/elements';

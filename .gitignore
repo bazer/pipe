@@ -2,5 +2,7 @@ node_modules/
 bin/
 dist/
 test/
+coverage/
+.nyc_output/
 yarn.lock
 yarn-error.log

@@ -1,6 +1,14 @@
 import { elements } from "..";
 import { IParserNode, ParserNode } from "../shared/parsernode";
-import { ASTElementLayout } from "../elements/elements";
+import { ASTElement, ASTElementLayout } from "../elements/ASTElement";
+import { ASTElementWithValue } from "../elements/ASTElementWithValue";
+import { ASTElementWithAmount } from "../elements/ASTElementWithAmount";
+import { ASTWhitespaceElement } from "../elements/ASTWhitespaceElement";
+import { TextElement } from "../elements/core/TextElement";
+import { WordElement } from "../elements/core/WordElement";
+import { SpaceElement } from "../elements/core/SpaceElement";
+import { UnknownElement } from "../elements/core/UnknownElement";
+import { NewLineElement } from "../elements/core/NewLineElement";
 
 export enum ParseErrorType {
     UnallowedNesting,
@@ -16,16 +24,16 @@ export class ParseError {
 }
 
 export class SearchNode {
-    constructor(public node: Node, public element: elements.ASTElement) {
+    constructor(public node: Node, public element: ASTElement) {
     }
 }
 
 
 export class ParseResult {
     // public errors: ParseError[];
-    // public ast: elements.ASTElement[];
+    // public ast: ASTElement[];
 
-    constructor(public ast: elements.ASTElement[] = [], public errors: ParseError[] = []) {
+    constructor(public ast: ASTElement[] = [], public errors: ParseError[] = []) {
     }
 }
 
@@ -45,22 +53,22 @@ export type ASTMixin<T> = new (...args: any[]) => T;
 export abstract class ASTBase {
 
     errors: ParseError[] = []
-    insertedElements: elements.ASTElement[] = [];
-    extensionElements: (ASTMixin<elements.ASTElement>)[] = [];
+    insertedElements: ASTElement[] = [];
+    extensionElements: (ASTMixin<ASTElement>)[] = [];
 
-    constructor(extensionElements: (ASTMixin<elements.ASTElement>)[] = []) {
+    constructor(extensionElements: (ASTMixin<ASTElement>)[] = []) {
         this.extensionElements = extensionElements;
     }
 
-    protected reportUnallowedNesting(child: elements.ASTElement, parent: elements.ASTElement) {
+    protected reportUnallowedNesting(child: ASTElement, parent: ASTElement) {
         this.errors.push(new ParseError(ParseErrorType.UnallowedNesting, `Element of type '${child.elementName}' inside '${parent.elementName}'`));
     }
 
-    protected reportUnknownElement(element: elements.ASTElement, parent: elements.ASTElement) {
+    protected reportUnknownElement(element: ASTElement, parent: ASTElement) {
         this.errors.push(new ParseError(ParseErrorType.UnknownElement, `Unknown element of type '${element.elementName}' inside '${parent.elementName}'`));
     }
 
-    protected reportEmptyElement(element: elements.ASTElement, parent?: elements.ASTElement) {
+    protected reportEmptyElement(element: ASTElement, parent?: ASTElement) {
         if (parent)
             this.errors.push(new ParseError(ParseErrorType.EmptyElement, `Element of type '${element.elementName}' inside '${parent.elementName}' should not be empty.`));
         else
@@ -75,7 +83,7 @@ export abstract class ASTBase {
         return this.getASTElement(node) != null;
     }
 
-    protected getASTElement(node: IParserNode | string): elements.ASTElement {
+    protected getASTElement(node: IParserNode | string): ASTElement {
         if (typeof node === "string") {
             node = new ParserNode(node);
         }
@@ -87,13 +95,13 @@ export abstract class ASTBase {
         });
 
 
-        if (element instanceof elements.ASTWhitespaceElement)
+        if (element instanceof ASTWhitespaceElement)
             element.explicit = node.explicit;
 
-        if (element instanceof elements.ASTElementWithValue)
+        if (element instanceof ASTElementWithValue)
             element.value = node.value || ""; 
 
-        if (element instanceof elements.ASTElementWithAmount)
+        if (element instanceof ASTElementWithAmount)
             element.amount = node.amount;
 
         return element;
@@ -119,11 +127,11 @@ export abstract class ASTBase {
             case "u": return new elements.Underline();
             case "a": return new elements.Hyperlink("");
             case "img": return new elements.Image("");
-            case "_": return new elements.Space();
+            case "_": return new SpaceElement();
             case "s": return new elements.Strikethrough();
-            case "w": return new elements.Word(node.value);
-            case "t": return new elements.Text();
-            case "n": return new elements.NewLine();
+            case "w": return new WordElement(node.value);
+            case "t": return new TextElement();
+            case "n": return new NewLineElement();
             case "#": return new elements.Comment(node.value);
             case "h": return new elements.Heading(node.amount);
             case "style": return new elements.Style();
@@ -137,10 +145,10 @@ export abstract class ASTBase {
             case "fragment": return new elements.Fragment();
         }
 
-        return new elements.Unknown(node.name);
+        return new UnknownElement(node.name);
     }
 
-    public doSanityCheck(children: elements.ASTElement[], parents: elements.ASTElement[] = []) {
+    public doSanityCheck(children: ASTElement[], parents: ASTElement[] = []) {
         children.forEach(child => {
             if (child.layout == ASTElementLayout.NewLine) {
                 if (parents.length > 0 && !child.allowedParents.some(type => parents.last() instanceof type)) {
@@ -149,7 +157,7 @@ export abstract class ASTBase {
                 }
             }
 
-            if (child instanceof elements.Text && child.children.length == 0) {
+            if (child instanceof TextElement && child.children.length == 0) {
                 this.reportEmptyElement(child, parents.last());
             }
 
@@ -158,19 +166,19 @@ export abstract class ASTBase {
     }
 
 
-    public cloneElement(element: elements.ASTElement, withChildren = false) {
+    public cloneElement(element: ASTElement, withChildren = false) {
         let newElement = this.getASTElement(element.elementName);
         newElement.arguments = element.arguments;
         newElement.id = element.id;
 
-        if (element instanceof elements.ASTWhitespaceElement)
-            (newElement as elements.ASTWhitespaceElement).explicit = element.explicit;
+        if (element instanceof ASTWhitespaceElement)
+            (newElement as ASTWhitespaceElement).explicit = element.explicit;
 
-        if (element instanceof elements.ASTElementWithValue)
-            (newElement as elements.ASTElementWithValue).value = element.value;
+        if (element instanceof ASTElementWithValue)
+            (newElement as ASTElementWithValue).value = element.value;
 
-        if (element instanceof elements.ASTElementWithAmount)
-            (newElement as elements.ASTElementWithAmount).amount = element.amount;
+        if (element instanceof ASTElementWithAmount)
+            (newElement as ASTElementWithAmount).amount = element.amount;
 
         if (withChildren) {
             element.children.forEach(node => {
@@ -181,8 +189,8 @@ export abstract class ASTBase {
         return newElement;
     }
 
-    public findElementsWithName(elementName: string, searchElements: elements.ASTElement[], ) {
-        return searchElements.reduce((acc: elements.ASTElement[], element) => {
+    public findElementsWithName(elementName: string, searchElements: ASTElement[], ) {
+        return searchElements.reduce((acc: ASTElement[], element) => {
             if (element.elementName == elementName) {
                 acc.push(element);
             }
@@ -196,11 +204,11 @@ export abstract class ASTBase {
         }, [])
     }
 
-    protected isTextType(element: elements.ASTElement) {
-        return element instanceof elements.Word || element instanceof elements.Text || element instanceof elements.Space;
+    protected isTextType(element: ASTElement) {
+        return element instanceof WordElement || element instanceof TextElement || element instanceof SpaceElement;
     }
 
-    public static getCharLength(elements: elements.ASTElement[]) {
+    public static getCharLength(elements: ASTElement[]) {
         let count = 0;
         elements.forEach(x => count += x.charLength());
 

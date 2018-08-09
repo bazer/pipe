@@ -2,6 +2,12 @@ import { ASTBase, ASTMixin } from "../ast/astbase";
 import { elements } from "..";
 import 'core-js/es6/string';
 import { JSDOM } from "jsdom";
+import { ASTElement } from "../elements/ASTElement";
+import { TextElement } from "../elements/core/TextElement";
+import { WordElement } from "../elements/core/WordElement";
+import { SpaceElement } from "../elements/core/SpaceElement";
+import { UnknownElement } from "../elements/core/UnknownElement";
+import { NewLineElement } from "../elements/core/NewLineElement";
 const { document } = (new JSDOM(`...`)).window;
 
 // export class ASTHtmlEncoderMixin extends elements.ASTElement
@@ -20,22 +26,22 @@ const { document } = (new JSDOM(`...`)).window;
 // Test.FromHtml()
 
 export abstract class HtmlBase extends ASTBase {
-    constructor(extensionElements: (ASTMixin<elements.ASTElement>)[] = []) {
+    constructor(extensionElements: (ASTMixin<ASTElement>)[] = []) {
         super(extensionElements);
     }
 
     public static parseText(text: string | null) {
-        let textElement = new elements.Text();
+        let textElement = new TextElement();
         let savedWord = "";
 
-        textElement.children = (text || "").split("").reduce((acc: elements.ASTElement[], char) => {
+        textElement.children = (text || "").split("").reduce((acc: ASTElement[], char) => {
             let space = char === " ";
             let explicitSpace = char === '\u00A0';
             let newLine = char === "\n" || char === "\r" || char === "\r\n";
 
             if (space || explicitSpace || newLine) {
                 if (savedWord.length > 0) {
-                    acc.push(new elements.Word(savedWord));
+                    acc.push(new WordElement(savedWord));
                     savedWord = "";
                 }
 
@@ -43,7 +49,7 @@ export abstract class HtmlBase extends ASTBase {
                 //     explicitSpace = false;
 
                 //if (space || explicitSpace)
-                acc.push(new elements.Space(1, explicitSpace));
+                acc.push(new SpaceElement(1, explicitSpace));
                 // else if (newLine)
                 //     acc.push(new elements.NewLine());
             }
@@ -55,7 +61,7 @@ export abstract class HtmlBase extends ASTBase {
         }, []);
 
         if (savedWord.length > 0) {
-            textElement.children.push(new elements.Word(savedWord));
+            textElement.children.push(new WordElement(savedWord));
         }
 
         // if (textElement.children.length == 0)
@@ -91,7 +97,7 @@ export abstract class HtmlBase extends ASTBase {
                 if (h.href.length > 0 && !h.href.startsWith("#"))
                     return new elements.Hyperlink(h.href, h.target);
                 else
-                    return new elements.Unknown(html.nodeName.toLowerCase());
+                    return new UnknownElement(html.nodeName.toLowerCase());
             }
             case "img": {
                 let img = (html as HTMLImageElement);
@@ -100,7 +106,7 @@ export abstract class HtmlBase extends ASTBase {
                 return new elements.Image(src);
             }
             case "#text": return HtmlBase.parseText(html.nodeValue);
-            case "br": return new elements.NewLine(1, true);
+            case "br": return new NewLineElement(1, true);
             //case "e": return new elements.Extension();
             case "#comment": return new elements.Comment(html.nodeValue);
             case "#document-fragment": return new elements.Fragment();
@@ -115,7 +121,7 @@ export abstract class HtmlBase extends ASTBase {
             case "font": {
                 let color = (html as HTMLFontElement).color;
                 if (color == "" || color == "#000" || color === "#000000")
-                    return new elements.Unknown("span");
+                    return new UnknownElement("span");
                 else
                     return new elements.Color(color);
             }
@@ -139,16 +145,16 @@ export abstract class HtmlBase extends ASTBase {
                 return new elements.Bold();
         }
 
-        return new elements.Unknown(html.nodeName.toLowerCase());
+        return new UnknownElement(html.nodeName.toLowerCase());
     }
 
-    public getHtmlText(textElement: elements.Text) {
+    public getHtmlText(textElement: TextElement) {
         var text = "";
         textElement.children.forEach(child => {
-            if (child instanceof elements.Word) {
+            if (child instanceof WordElement) {
                 text += child.value;
             }
-            else if (child instanceof elements.Space) {
+            else if (child instanceof SpaceElement) {
                 if (child.explicit) {
                     for (let i = 0; i < child.amount; i++) {
                         text += "\u00A0";
@@ -162,11 +168,11 @@ export abstract class HtmlBase extends ASTBase {
         return document.createTextNode(text);
     }
 
-    protected isDOMElementType(element: elements.ASTElement) {
+    protected isDOMElementType(element: ASTElement) {
         return this.resolveDomElement(element) != null;
     }
 
-    public resolveDomElement(element: elements.ASTElement): HTMLElement | Text | Comment {
+    public resolveDomElement(element: ASTElement): HTMLElement | Text | Comment {
         switch (element.elementName) {
             case "d": return document.createElement('div');
             case "p": return document.createElement('p');
@@ -227,7 +233,7 @@ export abstract class HtmlBase extends ASTBase {
             //case "form": return (element as elements.Form).GetHtml();
         }
 
-        if (element instanceof elements.Unknown)
+        if (element instanceof UnknownElement)
             return document.createElement('span');
 
         throw this.error(`Unknown element '${element.elementName}'`);

@@ -1,17 +1,19 @@
 import * as elements from '../elements/elements';
+import * as NewLine from "../elements/core/NewLineElement";
 import { AST } from '../ast/ast';
-import { ASTElementLayout } from '../elements/elements';
 import { ParseResult, ASTMixin } from '../ast/astbase';
 import { HtmlBase } from './htmlbase';
+import { ASTElement, ASTElementLayout } from '../elements/ASTElement';
+import { SpaceElement } from '../elements/core/SpaceElement';
 
 
-export function ASTHtmlDecoderMixin<T extends ASTMixin<elements.ASTElement>>(mixinClass: T) {
+export function ASTHtmlDecoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
     return class extends mixinClass {
         constructor(...args: any[]) {
             super(...args);
         }
 
-        public static FromHtml(htmlElement: HTMLElement): elements.ASTElement {
+        public static FromHtml(htmlElement: HTMLElement): ASTElement {
             let html = new HtmlDecoder();
             return html.getASTElementFromHTML(htmlElement);
         }
@@ -67,8 +69,8 @@ export class HtmlDecoder extends HtmlBase {
         return results;
     }
 
-    public getASTElements(nodes: Node[]): elements.ASTElement[] {
-        var list = nodes.reduce((acc: elements.ASTElement[], node) => {
+    public getASTElements(nodes: Node[]): ASTElement[] {
+        var list = nodes.reduce((acc: ASTElement[], node) => {
 
             let element = this.getASTElementFromHTML(node);
 
@@ -96,18 +98,18 @@ export class HtmlDecoder extends HtmlBase {
     }
 
 
-    public reformatTextFromHtml(children: elements.ASTElement[]): elements.ASTElement[] {
+    public reformatTextFromHtml(children: ASTElement[]): ASTElement[] {
         var count = 0;
-        var list = children.reduce((acc: elements.ASTElement[], child) => {
-            if (child instanceof elements.NewLine && !child.explicit) {
+        var list = children.reduce((acc: ASTElement[], child) => {
+            if (child instanceof NewLine.NewLineElement && !child.explicit) {
                 count += child.amount;
             }
             else {
                 if (count > 0) {
                     if (child.layout == ASTElementLayout.Inline && acc.length > 0 && acc.last().layout == ASTElementLayout.Inline)
-                        acc.push(new elements.Space());
+                        acc.push(new SpaceElement());
                     else
-                        acc.push(new elements.NewLine(count));
+                        acc.push(new NewLine.NewLineElement(count));
 
                     count = 0;
                 }
@@ -122,17 +124,17 @@ export class HtmlDecoder extends HtmlBase {
         }, [])
 
         if (count > 0) {
-            list.push(new elements.NewLine(count));
+            list.push(new NewLine.NewLineElement(count));
         }
 
         return list;
     }
 
-    public convertDivToNewLine(children: elements.ASTElement[]): elements.ASTElement[] {
-        var list = children.reduce((acc: elements.ASTElement[], child) => {
+    public convertDivToNewLine(children: ASTElement[]): ASTElement[] {
+        var list = children.reduce((acc: ASTElement[], child) => {
             if (child.elementName == "div") {
-                if (acc.length > 0 && !(acc.last() instanceof elements.NewLine))
-                    acc.push(new elements.NewLine());
+                if (acc.length > 0 && !(acc.last() instanceof NewLine.NewLineElement))
+                    acc.push(new NewLine.NewLineElement());
 
                 this.convertDivToNewLine(child.children).forEach(node => {
                     acc.push(node);
@@ -152,9 +154,9 @@ export class HtmlDecoder extends HtmlBase {
         return list;
     }
 
-    // public removeFragments(children: elements.ASTElement[]): elements.ASTElement[] {
+    // public removeFragments(children: ASTElement[]): ASTElement[] {
     //     let hasReachedendFragment = false;
-    //     return children.reduce((acc: elements.ASTElement[], child) => {
+    //     return children.reduce((acc: ASTElement[], child) => {
     //         if (child instanceof elements.Fragment) {
     //             if (child.value.toLowerCase() === "startfragment") {
     //                 return [];
@@ -176,9 +178,9 @@ export class HtmlDecoder extends HtmlBase {
     //     }, [])
     // }
 
-    public removeFragments(children: elements.ASTElement[]): elements.ASTElement[] {
+    public removeFragments(children: ASTElement[]): ASTElement[] {
         let hasReachedendFragment = false;
-        return children.reduce((acc: elements.ASTElement[], child) => {
+        return children.reduce((acc: ASTElement[], child) => {
             if (child instanceof elements.Comment) {
                 if (child.value.toLowerCase() === "startfragment") {
                     return [];
@@ -205,8 +207,8 @@ export class HtmlDecoder extends HtmlBase {
         }, [])
     }
 
-    public removeStyleAndScript(element: elements.ASTElement): elements.ASTElement[] {
-        let children: elements.ASTElement[] = [];
+    public removeStyleAndScript(element: ASTElement): ASTElement[] {
+        let children: ASTElement[] = [];
 
         element.children.forEach(child => {
             this.removeStyleAndScript(child).forEach(newChild => {
@@ -266,7 +268,7 @@ export class HtmlDecoder extends HtmlBase {
         if (insertNewLine 
             && astElements.length > 0 
             && astElements.last() instanceof elements.Paragraph 
-            && (astElements.last().children.length == 0 || (astElements.last().children.length == 1 && astElements.last().children[0] instanceof elements.NewLine))) {
+            && (astElements.last().children.length == 0 || (astElements.last().children.length == 1 && astElements.last().children[0] instanceof NewLine.NewLineElement))) {
             astElements = ast.insertNewLineAtEndInParagraphs(astElements);
         }
 

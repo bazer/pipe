@@ -1,16 +1,21 @@
 import * as elements from "../elements/elements";
-import { ASTElementLayout } from "../elements/elements";
+import * as NewLine from "../elements/core/NewLineElement";
 import { ParserNode, IParserNode } from "../shared/parsernode";
 import { ParseResult, ASTBase, ASTMixin } from "./astbase";
 import { Parser } from "../reader/parser";
+import { ASTElement, ASTElementLayout, ASTElementType } from "../elements/ASTElement";
+import { TextElement } from "../elements/core/TextElement";
+import { WordElement } from "../elements/core/WordElement";
+import { SpaceElement } from "../elements/core/SpaceElement";
+import { UnknownElement } from "../elements/core/UnknownElement";
 
 export class AST extends ASTBase {
 
-    constructor(extensionElements: (ASTMixin<elements.ASTElement>)[] = []) {
+    constructor(extensionElements: (ASTMixin<ASTElement>)[] = []) {
         super(extensionElements);
     }
 
-    public decode(input: string): elements.ASTElement[] {
+    public decode(input: string): ASTElement[] {
         if (input == null)
             return [];
 
@@ -30,7 +35,7 @@ export class AST extends ASTBase {
         return list;
     }
 
-    protected getASTElements(input: IParserNode): elements.ASTElement {
+    protected getASTElements(input: IParserNode): ASTElement {
         if (!this.isASTElementType(input)) {
             throw this.error(`Unknown element '${input.name}'`);
         }
@@ -43,7 +48,7 @@ export class AST extends ASTBase {
         return element;
     }
 
-    public getNumChars(elements: elements.ASTElement[]) {
+    public getNumChars(elements: ASTElement[]) {
         return elements.reduce((acc, x) => x.charLength() + acc, 0);
     }
 
@@ -61,7 +66,7 @@ export class AST extends ASTBase {
     //     return numChars;
     // }
 
-    public format(elements: elements.ASTElement[]) {
+    public format(elements: ASTElement[]) {
 
         //elements = this.convertParagraphToNewLines(elements);
         elements = elements.flatMap(x => this.removeUnknownElements(x));
@@ -78,7 +83,7 @@ export class AST extends ASTBase {
         return results;
     }
 
-    public insert(original: elements.ASTElement[], paste: elements.ASTElement[], offset: number) {
+    public insert(original: ASTElement[], paste: ASTElement[], offset: number) {
 
         let list = this.insertNewLineAtEndInParagraphs(original);
         list = this.insertIntoElement(list, paste, offset);
@@ -102,8 +107,8 @@ export class AST extends ASTBase {
         return results;
     }
 
-    // protected insertElements(originalElements: elements.ASTElement[], elementsToInsert: elements.ASTElement[], intoElement: elements.ASTElement, charIndex: number): elements.ASTElement[] {
-    //     var list = originalElements.reduce((acc: elements.ASTElement[], child) => {
+    // protected insertElements(originalElements: ASTElement[], elementsToInsert: ASTElement[], intoElement: elements.ASTElement, charIndex: number): ASTElement[] {
+    //     var list = originalElements.reduce((acc: ASTElement[], child) => {
     //         if (child.id === intoElement.id) {
     //             this.insertIntoElement(child, elementsToInsert, charIndex)
     //                 .forEach(x => acc.push(x));
@@ -122,22 +127,22 @@ export class AST extends ASTBase {
     // }
 
 
-    protected insertIntoElement(originalElements: elements.ASTElement[], elementsToInsert: elements.ASTElement[], charIndex: number) {
+    protected insertIntoElement(originalElements: ASTElement[], elementsToInsert: ASTElement[], charIndex: number) {
         if (originalElements.length == 0) {
             return elementsToInsert.map(x => this.cloneElement(x, true));
         }
 
         let charCount = 0;
         let inserted = false;
-        let list = originalElements.reduce((acc: elements.ASTElement[], element: elements.ASTElement) => {
+        let list = originalElements.reduce((acc: ASTElement[], element: ASTElement) => {
             if (!inserted && charCount + element.charLength() >= charIndex) {
-                let elementsToPush: elements.ASTElement[] = [];
+                let elementsToPush: ASTElement[] = [];
 
                 elementsToInsert.forEach(x => {
                     elementsToPush.push(this.cloneElement(x, true));
                 });
 
-                if (element instanceof elements.NewLine) {
+                if (element instanceof NewLine.NewLineElement) {
                     elementsToPush.push(this.cloneElement(element, true));
                 }
                 else if (elementsToInsert.some(x => x.layout == ASTElementLayout.NewLine)) {
@@ -146,14 +151,14 @@ export class AST extends ASTBase {
                     else
                         acc.push(this.cloneElement(element, true));
                 }
-                else if (element instanceof elements.Text) {
+                else if (element instanceof TextElement) {
                     let newText = this.splitText(element, charIndex - charCount);
                     this.pushIfNotEmpty(acc, newText[0]);
                     //acc.push(newText[0]);
                     this.pushIfNotEmpty(elementsToPush, newText[1]);
                     // elementsToPush.push(newText[1]);
                 }
-                else if (element.canHaveChildren && element.type != elements.ASTElementType.Content) {
+                else if (element.canHaveChildren && element.type != ASTElementType.Content) {
                     let newElement = this.cloneElement(element);
                     newElement.children = this.insertIntoElement(element.children, elementsToPush, charIndex - charCount);
                     elementsToPush = [newElement];
@@ -188,8 +193,8 @@ export class AST extends ASTBase {
     }
 
 
-    // protected insertIntoElement(element: elements.ASTElement, elementsToInsert: elements.ASTElement[], charIndex: number) {
-    //     let list: elements.ASTElement[] = [];
+    // protected insertIntoElement(element: elements.ASTElement, elementsToInsert: ASTElement[], charIndex: number) {
+    //     let list: ASTElement[] = [];
 
     //     if (element instanceof elements.Text) {
     //         let newText = this.splitText(element, charIndex);
@@ -208,9 +213,9 @@ export class AST extends ASTBase {
     //     else {
     //         let charCount = 0;
     //         let inserted = false;
-    //         list = element.children.reduce((acc: elements.ASTElement[], child: elements.ASTElement) => {
+    //         list = element.children.reduce((acc: ASTElement[], child: elements.ASTElement) => {
     //             if (!inserted && charCount + child.charLength() >= charIndex) {
-    //                 let elementsToPush: elements.ASTElement[] = [];
+    //                 let elementsToPush: ASTElement[] = [];
 
     //                 elementsToInsert.forEach(x => {
     //                     elementsToPush.push(this.cloneElement(x, true));
@@ -259,9 +264,9 @@ export class AST extends ASTBase {
     //     return [newElement];
     // }
 
-    protected splitText(element: elements.Text, charIndex: number) {
-        let firstElement = this.cloneElement(element) as elements.Text;
-        let secondElement = this.cloneElement(element) as elements.Text;
+    protected splitText(element: TextElement, charIndex: number) {
+        let firstElement = this.cloneElement(element) as TextElement;
+        let secondElement = this.cloneElement(element) as TextElement;
         let charCount = 0;
 
         element.children.forEach(child => {
@@ -271,12 +276,12 @@ export class AST extends ASTBase {
             else if (charCount > charIndex) {
                 this.pushIfNotEmpty(secondElement.children, this.cloneElement(child));
             }
-            else if (child instanceof elements.Word) {
+            else if (child instanceof WordElement) {
                 let words = this.splitWord(child, charIndex - charCount);
                 this.pushIfNotEmpty(firstElement.children, words[0]);
                 this.pushIfNotEmpty(secondElement.children, words[1]);
             }
-            else if (child instanceof elements.Space) {
+            else if (child instanceof SpaceElement) {
                 let spaces = this.splitSpace(child, charIndex - charCount);
 
                 this.pushIfNotEmpty(firstElement.children, spaces[0]);
@@ -292,36 +297,36 @@ export class AST extends ASTBase {
         return [firstElement, secondElement];
     }
 
-    protected pushIfNotEmpty(list: elements.ASTElement[], element: elements.ASTElement) {
+    protected pushIfNotEmpty(list: ASTElement[], element: ASTElement) {
         if (element.charLength() > 0)
             list.push(element);
     }
 
-    protected splitWord(element: elements.Word, charIndex: number) {
-        let newElement = this.cloneElement(element) as elements.Word;
+    protected splitWord(element: WordElement, charIndex: number) {
+        let newElement = this.cloneElement(element) as WordElement;
         newElement.value = element.value.substring(0, charIndex);
 
-        return [newElement, new elements.Word(element.value.substring(charIndex))];
+        return [newElement, new WordElement(element.value.substring(charIndex))];
     }
 
-    protected splitSpace(element: elements.Space, charIndex: number) {
-        let newElement = this.cloneElement(element) as elements.Space;
+    protected splitSpace(element: SpaceElement, charIndex: number) {
+        let newElement = this.cloneElement(element) as SpaceElement;
         newElement.amount = charIndex;
 
-        return [newElement, new elements.Space(element.amount - charIndex)];
+        return [newElement, new SpaceElement(element.amount - charIndex)];
     }
 
 
-    public convertParagraphToNewLines(children: elements.ASTElement[]): elements.ASTElement[] {
-        var list = children.reduce((acc: elements.ASTElement[], child) => {
+    public convertParagraphToNewLines(children: ASTElement[]): ASTElement[] {
+        var list = children.reduce((acc: ASTElement[], child) => {
             if (child instanceof elements.Paragraph) {
-                acc.push(new elements.NewLine(2));
+                acc.push(new NewLine.NewLineElement(2));
 
                 this.convertParagraphToNewLines(child.children).forEach(node => {
                     acc.push(node);
                 });
 
-                acc.push(new elements.NewLine(2));
+                acc.push(new NewLine.NewLineElement(2));
             }
             else {
 
@@ -338,8 +343,8 @@ export class AST extends ASTBase {
     }
 
 
-    public removeUnknownElements(element: elements.ASTElement): elements.ASTElement[] {
-        let children: elements.ASTElement[] = [];
+    public removeUnknownElements(element: ASTElement): ASTElement[] {
+        let children: ASTElement[] = [];
 
         element.children.forEach(child => {
             this.removeUnknownElements(child).forEach(newChild => {
@@ -347,7 +352,7 @@ export class AST extends ASTBase {
             });
         });
 
-        if (element instanceof elements.Unknown) {
+        if (element instanceof UnknownElement) {
             return children;
         }
 
@@ -357,8 +362,8 @@ export class AST extends ASTBase {
         return [newElement];
     }
 
-    public removeComments(element: elements.ASTElement): elements.ASTElement[] {
-        let children: elements.ASTElement[] = [];
+    public removeComments(element: ASTElement): ASTElement[] {
+        let children: ASTElement[] = [];
 
         element.children.forEach(child => {
             this.removeComments(child).forEach(newChild => {
@@ -376,10 +381,10 @@ export class AST extends ASTBase {
         return [newElement];
     }
 
-    public formatText(children: elements.ASTElement[]): elements.ASTElement[] {
-        return children.reduce((acc: elements.ASTElement[], child) => {
-            if (child instanceof elements.Text) {
-                this.removeSpaces(child, acc.length > 0 && acc.last() instanceof elements.NewLine)
+    public formatText(children: ASTElement[]): ASTElement[] {
+        return children.reduce((acc: ASTElement[], child) => {
+            if (child instanceof TextElement) {
+                this.removeSpaces(child, acc.length > 0 && acc.last() instanceof NewLine.NewLineElement)
                     .forEach(x => acc.push(x));
             }
             else {
@@ -397,16 +402,16 @@ export class AST extends ASTBase {
 
     }
 
-    public removeSpaces(text: elements.Text, precededByNewLine = false): elements.ASTElement[] {
+    public removeSpaces(text: TextElement, precededByNewLine = false): ASTElement[] {
         var count = 0;
-        var list = text.children.reduce((acc: elements.ASTElement[], child) => {
-            if (child instanceof elements.Space && !child.explicit) {
+        var list = text.children.reduce((acc: ASTElement[], child) => {
+            if (child instanceof SpaceElement && !child.explicit) {
                 count += child.amount;
             }
             else {
                 if (count > 0) {
                     if (!precededByNewLine) {
-                        acc.push(new elements.Space());
+                        acc.push(new SpaceElement());
                     }
 
                     count = 0;
@@ -422,7 +427,7 @@ export class AST extends ASTBase {
         }, [])
 
         if (count > 0 && !precededByNewLine) {
-            list.push(new elements.Space());
+            list.push(new SpaceElement());
         }
 
         if (list.length == 0) {
@@ -435,9 +440,9 @@ export class AST extends ASTBase {
         return [newText];
     }
 
-    // public removeSpaces(children: elements.ASTElement[]): elements.ASTElement[] {
+    // public removeSpaces(children: ASTElement[]): ASTElement[] {
     //     var count = 0;
-    //     var list = children.reduce((acc: elements.ASTElement[], child) => {
+    //     var list = children.reduce((acc: ASTElement[], child) => {
     //         if (child instanceof elements.Space && !child.explicit) {
     //             count += child.amount;
     //         }
@@ -464,19 +469,19 @@ export class AST extends ASTBase {
     //     return list;
     // }
 
-    public removeNewLines(children: elements.ASTElement[]): elements.ASTElement[] {
+    public removeNewLines(children: ASTElement[]): ASTElement[] {
         var count = 0;
-        var list = children.reduce((acc: elements.ASTElement[], child) => {
-            if (child instanceof elements.NewLine && !child.explicit) {
+        var list = children.reduce((acc: ASTElement[], child) => {
+            if (child instanceof NewLine.NewLineElement && !child.explicit) {
                 count += child.amount;
             }
             else {
                 //Only insert if we are not in the beginning of a block and the element before and after does not create new lines themselves
                 if (count > 0 && acc.length > 0 && !(child.layout == ASTElementLayout.NewLine || acc.last().layout == ASTElementLayout.NewLine)) {
                     if (count > 1)
-                        acc.push(new elements.NewLine(2));
+                        acc.push(new NewLine.NewLineElement(2));
                     else
-                        acc.push(new elements.NewLine(1));
+                        acc.push(new NewLine.NewLineElement(1));
                 }
 
                 count = 0;
@@ -493,9 +498,9 @@ export class AST extends ASTBase {
         return list;
     }
 
-    // public concatAllText(children: elements.ASTElement[]): elements.ASTElement[] {
+    // public concatAllText(children: ASTElement[]): ASTElement[] {
     //     var text = "";
-    //     var list = children.reduce((acc: elements.ASTElement[], child) => {
+    //     var list = children.reduce((acc: ASTElement[], child) => {
     //         if (child instanceof elements.Text || child instanceof elements.Word) {
     //             if (text.length > 0 && !text.endsWith(" "))
     //                 text += " ";
@@ -528,12 +533,12 @@ export class AST extends ASTBase {
     // }
 
 
-    public removeNewLineAtEndFromParagraphs(list: elements.ASTElement[]) {
-        return list.reduce((acc: elements.ASTElement[], element) => {
+    public removeNewLineAtEndFromParagraphs(list: ASTElement[]) {
+        return list.reduce((acc: ASTElement[], element) => {
             let children = element.children;
 
             if (element instanceof elements.Paragraph) {
-                if (element.children.length > 0 && element.children.last() instanceof elements.NewLine) {
+                if (element.children.length > 0 && element.children.last() instanceof NewLine.NewLineElement) {
                     children.pop();
                 }
             }
@@ -547,13 +552,13 @@ export class AST extends ASTBase {
         }, [])
     }
 
-    public insertNewLineAtEndInParagraphs(list: elements.ASTElement[]) {
-        return list.reduce((acc: elements.ASTElement[], element) => {
+    public insertNewLineAtEndInParagraphs(list: ASTElement[]) {
+        return list.reduce((acc: ASTElement[], element) => {
             let children = element.children;
 
             if (element instanceof elements.Paragraph) {
-                if (element.children.length == 0 || !(element.children.last() instanceof elements.NewLine)) {
-                    children.push(new elements.NewLine());
+                if (element.children.length == 0 || !(element.children.last() instanceof NewLine.NewLineElement)) {
+                    children.push(new NewLine.NewLineElement());
                 }
             }
 
@@ -566,12 +571,12 @@ export class AST extends ASTBase {
         }, [])
     }
 
-    public insertParagraphs(children: elements.ASTElement[]) {
+    public insertParagraphs(children: ASTElement[]) {
         var count = 0;
-        var savedChildren: elements.ASTElement[] = [];
+        var savedChildren: ASTElement[] = [];
 
-        var list = children.reduce((acc: elements.ASTElement[], child) => {
-            if (child instanceof elements.NewLine && !child.explicit) {
+        var list = children.reduce((acc: ASTElement[], child) => {
+            if (child instanceof NewLine.NewLineElement && !child.explicit) {
                 count += child.amount;
             }
             else {
@@ -596,7 +601,7 @@ export class AST extends ASTBase {
                     if (savedChildren.length > 0) {
                         //if we only have explicit new lines left, try to stuff them in the last paragraph or return them as is. 
                         //Otherwise create a new paragraph
-                        if (savedChildren.every(x => x instanceof elements.NewLine)) {
+                        if (savedChildren.every(x => x instanceof NewLine.NewLineElement)) {
                             if (acc.length > 0 && acc.last() instanceof elements.Paragraph) {
                                 savedChildren.forEach(x => {
                                     acc.last().children.push(x);

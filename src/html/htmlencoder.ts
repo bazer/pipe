@@ -2,11 +2,11 @@ import * as elements from '../elements/elements';
 import { ASTMixin } from '../ast/astbase';
 import AST from '../ast/ast';
 import { HtmlBase } from './htmlbase';
-import { ASTElementLayout } from '../elements/elements';
 import { JSDOM } from "jsdom";
+import { ASTElement, ASTElementLayout } from '../elements/ASTElement';
 const { document } = (new JSDOM(`...`)).window;
 
-export function ASTHtmlEncoderMixin<T extends ASTMixin<elements.ASTElement>>(mixinClass: T) {
+export function ASTHtmlEncoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
     return class extends mixinClass {
         constructor(...args: any[]) {
             super(...args);
@@ -37,7 +37,7 @@ export class HtmlEncoder extends HtmlBase {
         return htmlElement.innerHTML;
     }
 
-    public encode(astElements: elements.ASTElement[], insertParagraphs = false): Node[] {
+    public encode(astElements: ASTElement[], insertParagraphs = false): Node[] {
         let ast = new AST(this.extensionElements);
 
         if (insertParagraphs)
@@ -51,7 +51,7 @@ export class HtmlEncoder extends HtmlBase {
         return domElements;
     }
 
-    public getDomElements(children: elements.ASTElement[]): Node[] {
+    public getDomElements(children: ASTElement[]): Node[] {
         var list = children.reduce((acc: Node[], element) => {
             // if (!this.isDOMElementType(element)) {
             //     this.error(`Unknown element '${element.name}'`);
@@ -84,7 +84,7 @@ export class HtmlEncoder extends HtmlBase {
         return list;
     }
 
-    public resolveDomElement(element: elements.ASTElement): HTMLElement | Text | Comment {
+    public resolveDomElement(element: ASTElement): HTMLElement | Text | Comment {
         let matches = this.encodeExtensionElements.filter(x => {
             //let result = x.call(this);
             //console.log(x.prototype);

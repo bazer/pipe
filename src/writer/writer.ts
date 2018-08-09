@@ -1,14 +1,16 @@
 import { ASTBase } from "../ast/astbase";
-import { elements } from "..";
 import { ParserNode, IParserNodeProperty, ParserNodeProperty } from "../shared/parsernode";
-import { ASTElementLayout } from "../elements/elements";
+import { ASTElement, ASTElementLayout } from "../elements/ASTElement";
+import { ASTElementWithValue } from "../elements/ASTElementWithValue";
+import { ASTElementWithAmount } from "../elements/ASTElementWithAmount";
+import { ASTWhitespaceElement } from "../elements/ASTWhitespaceElement";
 
 export class Writer extends ASTBase {
     constructor() {
         super();
     }
 
-    public encode(elements: elements.ASTElement[]) {
+    public encode(elements: ASTElement[]) {
         let nodes = this.getParserNodes(elements);
 
         return this.encodeNodes(nodes);
@@ -86,8 +88,8 @@ export class Writer extends ASTBase {
         .join(" ");
     }
 
-    protected getParserNodes(elements: elements.ASTElement[]) {
-        let lastElement: elements.ASTElement | null = null; //elements.length > 0 ? elements[0] : null;
+    protected getParserNodes(elements: ASTElement[]) {
+        let lastElement: ASTElement | null = null; //elements.length > 0 ? elements[0] : null;
         let list = elements.reduce((acc: ParserNode[], element) => {
             let node = this.resolveParserNode(element);
             node.children = this.getParserNodes(element.children);
@@ -112,7 +114,7 @@ export class Writer extends ASTBase {
     }
 
 
-    protected resolveParserNode(element: elements.ASTElement) {
+    protected resolveParserNode(element: ASTElement) {
         var node = new ParserNode(element.elementName);
         Object.keys(element.arguments).forEach(key => {
             let property = new ParserNodeProperty(key);
@@ -121,13 +123,13 @@ export class Writer extends ASTBase {
             node.properties.push(property);
         });
 
-        if (element instanceof elements.ASTWhitespaceElement)
+        if (element instanceof ASTWhitespaceElement)
             node.explicit = element.explicit;
 
-        if (element instanceof elements.ASTElementWithValue)
+        if (element instanceof ASTElementWithValue)
             node.value = element.value;
 
-        if (element instanceof elements.ASTElementWithAmount)
+        if (element instanceof ASTElementWithAmount)
             node.amount = element.amount;
 
         return node;

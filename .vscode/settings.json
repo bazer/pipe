@@ -7,7 +7,7 @@
     ],
     "mocha.files.glob": "tests/**/*.ts",
     "mocha.requires": [
-        "ts-node/register"
+        "ts-node/register/transpile-only"
     ],
     "mocha.coverage": {
         "enable": false,

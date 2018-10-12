@@ -1,4 +1,4 @@
-import AST from "../ast/ast";
+import { AST } from "../ast/ast";
 import { Utils } from "./Utils";
 
 

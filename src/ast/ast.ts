@@ -1,5 +1,4 @@
-import * as elements from "../elements/elements";
-import * as NewLine from "../elements/core/NewLineElement";
+import { NewLineElement } from "../elements/core/NewLineElement";
 import { ParserNode, IParserNode } from "../shared/parsernode";
 import { ParseResult, ASTBase, ASTMixin } from "./astbase";
 import { Parser } from "../reader/parser";
@@ -8,6 +7,7 @@ import { TextElement } from "../elements/core/TextElement";
 import { WordElement } from "../elements/core/WordElement";
 import { SpaceElement } from "../elements/core/SpaceElement";
 import { UnknownElement } from "../elements/core/UnknownElement";
+import { ParagraphElement, CommentElement } from "../elements/elements";
 
 export class AST extends ASTBase {
 
@@ -142,7 +142,7 @@ export class AST extends ASTBase {
                     elementsToPush.push(this.cloneElement(x, true));
                 });
 
-                if (element instanceof NewLine.NewLineElement) {
+                if (element instanceof NewLineElement) {
                     elementsToPush.push(this.cloneElement(element, true));
                 }
                 else if (elementsToInsert.some(x => x.layout == ASTElementLayout.NewLine)) {
@@ -319,14 +319,14 @@ export class AST extends ASTBase {
 
     public convertParagraphToNewLines(children: ASTElement[]): ASTElement[] {
         var list = children.reduce((acc: ASTElement[], child) => {
-            if (child instanceof elements.Paragraph) {
-                acc.push(new NewLine.NewLineElement(2));
+            if (child instanceof ParagraphElement) {
+                acc.push(new NewLineElement(2));
 
                 this.convertParagraphToNewLines(child.children).forEach(node => {
                     acc.push(node);
                 });
 
-                acc.push(new NewLine.NewLineElement(2));
+                acc.push(new NewLineElement(2));
             }
             else {
 
@@ -371,7 +371,7 @@ export class AST extends ASTBase {
             });
         });
 
-        if (element instanceof elements.Comment) {
+        if (element instanceof CommentElement) {
             return children;
         }
 
@@ -384,7 +384,7 @@ export class AST extends ASTBase {
     public formatText(children: ASTElement[]): ASTElement[] {
         return children.reduce((acc: ASTElement[], child) => {
             if (child instanceof TextElement) {
-                this.removeSpaces(child, acc.length > 0 && acc.last() instanceof NewLine.NewLineElement)
+                this.removeSpaces(child, acc.length > 0 && acc.last() instanceof NewLineElement)
                     .forEach(x => acc.push(x));
             }
             else {
@@ -472,16 +472,16 @@ export class AST extends ASTBase {
     public removeNewLines(children: ASTElement[]): ASTElement[] {
         var count = 0;
         var list = children.reduce((acc: ASTElement[], child) => {
-            if (child instanceof NewLine.NewLineElement && !child.explicit) {
+            if (child instanceof NewLineElement && !child.explicit) {
                 count += child.amount;
             }
             else {
                 //Only insert if we are not in the beginning of a block and the element before and after does not create new lines themselves
                 if (count > 0 && acc.length > 0 && !(child.layout == ASTElementLayout.NewLine || acc.last().layout == ASTElementLayout.NewLine)) {
                     if (count > 1)
-                        acc.push(new NewLine.NewLineElement(2));
+                        acc.push(new NewLineElement(2));
                     else
-                        acc.push(new NewLine.NewLineElement(1));
+                        acc.push(new NewLineElement(1));
                 }
 
                 count = 0;
@@ -537,8 +537,8 @@ export class AST extends ASTBase {
         return list.reduce((acc: ASTElement[], element) => {
             let children = element.children;
 
-            if (element instanceof elements.Paragraph) {
-                if (element.children.length > 0 && element.children.last() instanceof NewLine.NewLineElement) {
+            if (element instanceof ParagraphElement) {
+                if (element.children.length > 0 && element.children.last() instanceof NewLineElement) {
                     children.pop();
                 }
             }
@@ -556,9 +556,9 @@ export class AST extends ASTBase {
         return list.reduce((acc: ASTElement[], element) => {
             let children = element.children;
 
-            if (element instanceof elements.Paragraph) {
-                if (element.children.length == 0 || !(element.children.last() instanceof NewLine.NewLineElement)) {
-                    children.push(new NewLine.NewLineElement());
+            if (element instanceof ParagraphElement) {
+                if (element.children.length == 0 || !(element.children.last() instanceof NewLineElement)) {
+                    children.push(new NewLineElement());
                 }
             }
 
@@ -576,13 +576,13 @@ export class AST extends ASTBase {
         var savedChildren: ASTElement[] = [];
 
         var list = children.reduce((acc: ASTElement[], child) => {
-            if (child instanceof NewLine.NewLineElement && !child.explicit) {
+            if (child instanceof NewLineElement && !child.explicit) {
                 count += child.amount;
             }
             else {
                 while (count > 0) {
                     if (count == 2 && savedChildren.length > 0) {
-                        var paragraph = new elements.Paragraph();
+                        var paragraph = new ParagraphElement();
 
                         paragraph.children = savedChildren;
                         acc.push(paragraph);
@@ -601,8 +601,8 @@ export class AST extends ASTBase {
                     if (savedChildren.length > 0) {
                         //if we only have explicit new lines left, try to stuff them in the last paragraph or return them as is. 
                         //Otherwise create a new paragraph
-                        if (savedChildren.every(x => x instanceof NewLine.NewLineElement)) {
-                            if (acc.length > 0 && acc.last() instanceof elements.Paragraph) {
+                        if (savedChildren.every(x => x instanceof NewLineElement)) {
+                            if (acc.length > 0 && acc.last() instanceof ParagraphElement) {
                                 savedChildren.forEach(x => {
                                     acc.last().children.push(x);
                                 });
@@ -614,7 +614,7 @@ export class AST extends ASTBase {
                             }
                         }
                         else {
-                            var paragraph = new elements.Paragraph();
+                            var paragraph = new ParagraphElement();
                             paragraph.children = savedChildren;
                             acc.push(paragraph);
                         }

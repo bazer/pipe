@@ -1,10 +1,10 @@
-import * as elements from '../elements/elements';
-import * as NewLine from "../elements/core/NewLineElement";
 import { AST } from '../ast/ast';
 import { ParseResult, ASTMixin } from '../ast/astbase';
 import { HtmlBase } from './htmlbase';
 import { ASTElement, ASTElementLayout } from '../elements/ASTElement';
 import { SpaceElement } from '../elements/core/SpaceElement';
+import { NewLineElement } from '../elements/core/NewLineElement';
+import { CommentElement, FragmentElement, StyleElement, ScriptElement, ParagraphElement } from '../elements/elements';
 
 
 export function ASTHtmlDecoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
@@ -101,7 +101,7 @@ export class HtmlDecoder extends HtmlBase {
     public reformatTextFromHtml(children: ASTElement[]): ASTElement[] {
         var count = 0;
         var list = children.reduce((acc: ASTElement[], child) => {
-            if (child instanceof NewLine.NewLineElement && !child.explicit) {
+            if (child instanceof NewLineElement && !child.explicit) {
                 count += child.amount;
             }
             else {
@@ -109,7 +109,7 @@ export class HtmlDecoder extends HtmlBase {
                     if (child.layout == ASTElementLayout.Inline && acc.length > 0 && acc.last().layout == ASTElementLayout.Inline)
                         acc.push(new SpaceElement());
                     else
-                        acc.push(new NewLine.NewLineElement(count));
+                        acc.push(new NewLineElement(count));
 
                     count = 0;
                 }
@@ -124,7 +124,7 @@ export class HtmlDecoder extends HtmlBase {
         }, [])
 
         if (count > 0) {
-            list.push(new NewLine.NewLineElement(count));
+            list.push(new NewLineElement(count));
         }
 
         return list;
@@ -133,8 +133,8 @@ export class HtmlDecoder extends HtmlBase {
     public convertDivToNewLine(children: ASTElement[]): ASTElement[] {
         var list = children.reduce((acc: ASTElement[], child) => {
             if (child.elementName == "div") {
-                if (acc.length > 0 && !(acc.last() instanceof NewLine.NewLineElement))
-                    acc.push(new NewLine.NewLineElement());
+                if (acc.length > 0 && !(acc.last() instanceof NewLineElement))
+                    acc.push(new NewLineElement());
 
                 this.convertDivToNewLine(child.children).forEach(node => {
                     acc.push(node);
@@ -181,7 +181,7 @@ export class HtmlDecoder extends HtmlBase {
     public removeFragments(children: ASTElement[]): ASTElement[] {
         let hasReachedendFragment = false;
         return children.reduce((acc: ASTElement[], child) => {
-            if (child instanceof elements.Comment) {
+            if (child instanceof CommentElement) {
                 if (child.value.toLowerCase() === "startfragment") {
                     return [];
                 }
@@ -191,7 +191,7 @@ export class HtmlDecoder extends HtmlBase {
                 }
             }
             
-            if (child instanceof elements.Fragment) {
+            if (child instanceof FragmentElement) {
                 this.removeFragments(child.children).forEach(x => {
                     acc.push(x);
                 })
@@ -216,7 +216,7 @@ export class HtmlDecoder extends HtmlBase {
             });
         });
 
-        if (element instanceof elements.Style || element instanceof elements.Script) {
+        if (element instanceof StyleElement || element instanceof ScriptElement) {
             return [];
         }
 
@@ -267,8 +267,8 @@ export class HtmlDecoder extends HtmlBase {
         
         if (insertNewLine 
             && astElements.length > 0 
-            && astElements.last() instanceof elements.Paragraph 
-            && (astElements.last().children.length == 0 || (astElements.last().children.length == 1 && astElements.last().children[0] instanceof NewLine.NewLineElement))) {
+            && astElements.last() instanceof ParagraphElement 
+            && (astElements.last().children.length == 0 || (astElements.last().children.length == 1 && astElements.last().children[0] instanceof NewLineElement))) {
             astElements = ast.insertNewLineAtEndInParagraphs(astElements);
         }
 

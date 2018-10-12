@@ -85,17 +85,17 @@ export abstract class HtmlBase extends ASTBase {
 
         switch (html.nodeName.toLowerCase()) {
             //case "d": return new elements.Document();
-            case "p": return new elements.Paragraph();
+            case "p": return new elements.ParagraphElement();
 
-            case "ul": return new elements.UnorderedList();
-            case "ol": return new elements.OrderedList();
-            case "li": return new elements.ListItem();
+            case "ul": return new elements.UnorderedListElement();
+            case "ol": return new elements.OrderedListElement();
+            case "li": return new elements.ListItemElement();
             //case "c": return new elements.Color();
 
             case "a": {
                 var h = (html as HTMLLinkElement);
                 if (h.href.length > 0 && !h.href.startsWith("#"))
-                    return new elements.Hyperlink(h.href, h.target);
+                    return new elements.HyperlinkElement(h.href, h.target);
                 else
                     return new UnknownElement(html.nodeName.toLowerCase());
             }
@@ -103,46 +103,46 @@ export abstract class HtmlBase extends ASTBase {
                 let img = (html as HTMLImageElement);
                 let src = img.src;
                 
-                return new elements.Image(src);
+                return new elements.ImageElement(src);
             }
             case "#text": return HtmlBase.parseText(html.nodeValue);
             case "br": return new NewLineElement(1, true);
             //case "e": return new elements.Extension();
-            case "#comment": return new elements.Comment(html.nodeValue);
-            case "#document-fragment": return new elements.Fragment();
-            case "style": return new elements.Style();
-            case "script": return new elements.Script();
+            case "#comment": return new elements.CommentElement(html.nodeValue);
+            case "#document-fragment": return new elements.FragmentElement();
+            case "style": return new elements.StyleElement();
+            case "script": return new elements.ScriptElement();
             //case "table": return new elements.Table();
             //case "tbody": return new elements.TableBody();
             //case "tr": return new elements.TableRow();
             //case "th": return new elements.TableHeaderCell();
             //case "td": return new elements.TableDataCell();
-            case "hr": return new elements.HorizontalRule();
+            case "hr": return new elements.HorizontalRuleElement();
             case "font": {
                 let color = (html as HTMLFontElement).color;
                 if (color == "" || color == "#000" || color === "#000000")
                     return new UnknownElement("span");
                 else
-                    return new elements.Color(color);
+                    return new elements.ColorElement(color);
             }
-            case "h1": return new elements.Heading(1);
-            case "h2": return new elements.Heading(2);
+            case "h1": return new elements.HeadingElement(1);
+            case "h2": return new elements.HeadingElement(2);
             case "h3":
             case "h4":
             case "h5":
             case "h6":
-                return new elements.Heading(3);
+                return new elements.HeadingElement(3);
             case "u":
-                return new elements.Underline();
+                return new elements.UnderlineElement();
             case "s":
             case "strike":
-                return new elements.Strikethrough();
+                return new elements.StrikethroughElement();
             case "i":
             case "em":
-                return new elements.Italic();
+                return new elements.ItalicElement();
             case "b":
             case "strong":
-                return new elements.Bold();
+                return new elements.BoldElement();
         }
 
         return new UnknownElement(html.nodeName.toLowerCase());
@@ -187,7 +187,7 @@ export abstract class HtmlBase extends ASTBase {
             case "hr": return document.createElement('hr');
             case "c": {
                 let f = document.createElement('font');
-                let color = (element as elements.Color).color();
+                let color = (element as elements.ColorElement).color();
                 if (color)
                     f.setAttribute('color', color);
                 return f;
@@ -197,7 +197,7 @@ export abstract class HtmlBase extends ASTBase {
             case "a": {
                 let a = document.createElement('a');
 
-                var h = (element as elements.Hyperlink);
+                var h = (element as elements.HyperlinkElement);
 
                 let url = h.getUrl();
                 if (url && url.length > 0)
@@ -214,7 +214,7 @@ export abstract class HtmlBase extends ASTBase {
 
             case "img": {
                 let e = document.createElement('img');
-                let url = (element as elements.Image).url();
+                let url = (element as elements.ImageElement).url();
                 if (url)
                     e.setAttribute('src', url);
 
@@ -222,8 +222,8 @@ export abstract class HtmlBase extends ASTBase {
             };
             case "n": return document.createElement('br');
             case "e": return document.createElement('span');
-            case "#": return document.createComment((element as elements.Comment).value);
-            case "h": return document.createElement('h' + (element as elements.Heading).amount);
+            case "#": return document.createComment((element as elements.CommentElement).value);
+            case "h": return document.createElement('h' + (element as elements.HeadingElement).amount);
             case "tbl": return document.createElement('table');
             //case "tbody": return document.createElement('tbody');
             case "tr": return document.createElement('tr');

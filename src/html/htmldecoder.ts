@@ -241,8 +241,14 @@ export class HtmlDecoder extends HtmlBase {
     }
 
     public getCharsSelected(editableElement: HTMLElement, range?: Range) {
-        if (range == null)
-            range = window.getSelection().getRangeAt(0);
+        if (range == null) {
+            let selection = window.getSelection();
+
+            if (selection !== null)
+                range = selection.getRangeAt(0);
+            else
+                return { start: 0, end: 0};
+        }
 
         let preSelectionRange = range.cloneRange();
         preSelectionRange.selectNodeContents(editableElement);

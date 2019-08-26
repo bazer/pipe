@@ -1,4 +1,4 @@
-import { elements } from "..";
+
 import { IParserNode, ParserNode } from "../shared/parsernode";
 import { ASTElement, ASTElementLayout } from "../elements/ASTElement";
 import { ASTElementWithValue } from "../elements/ASTElementWithValue";
@@ -9,6 +9,7 @@ import { WordElement } from "../elements/core/WordElement";
 import { SpaceElement } from "../elements/core/SpaceElement";
 import { UnknownElement } from "../elements/core/UnknownElement";
 import { NewLineElement } from "../elements/core/NewLineElement";
+import { elements } from "..";
 
 export enum ParseErrorType {
     UnallowedNesting,

@@ -1,4 +1,3 @@
-
 import { IParserNode, ParserNode } from "../shared/parsernode";
 import { ASTElement, ASTElementLayout } from "../elements/ASTElement";
 import { ASTElementWithValue } from "../elements/ASTElementWithValue";
@@ -9,7 +8,7 @@ import { WordElement } from "../elements/core/WordElement";
 import { SpaceElement } from "../elements/core/SpaceElement";
 import { UnknownElement } from "../elements/core/UnknownElement";
 import { NewLineElement } from "../elements/core/NewLineElement";
-import { elements } from "..";
+import { DocumentElement, ParagraphElement, ItalicElement, UnorderedListElement, OrderedListElement, ColorElement, ListItemElement, BoldElement, UnderlineElement, HyperlinkElement, ImageElement, StrikethroughElement, CommentElement, HeadingElement, StyleElement, ScriptElement, HorizontalRuleElement, FragmentElement } from "../elements/elements";
 
 export enum ParseErrorType {
     UnallowedNesting,
@@ -117,33 +116,33 @@ export abstract class ASTBase {
             return new matches[0]();
 
         switch (node.name) {
-            case "d": return new elements.Document();
-            case "p": return new elements.Paragraph();
-            case "i": return new elements.Italic();
-            case "ul": return new elements.UnorderedList();
-            case "ol": return new elements.OrderedList();
-            case "li": return new elements.ListItem();
-            case "c": return new elements.Color("");
-            case "b": return new elements.Bold();
-            case "u": return new elements.Underline();
-            case "a": return new elements.Hyperlink("");
-            case "img": return new elements.Image("");
+            case "d": return new DocumentElement();
+            case "p": return new ParagraphElement();
+            case "i": return new ItalicElement();
+            case "ul": return new UnorderedListElement();
+            case "ol": return new OrderedListElement();
+            case "li": return new ListItemElement();
+            case "c": return new ColorElement("");
+            case "b": return new BoldElement();
+            case "u": return new UnderlineElement();
+            case "a": return new HyperlinkElement("");
+            case "img": return new ImageElement("");
             case "_": return new SpaceElement();
-            case "s": return new elements.Strikethrough();
+            case "s": return new StrikethroughElement();
             case "w": return new WordElement(node.value);
             case "t": return new TextElement();
             case "n": return new NewLineElement();
-            case "#": return new elements.Comment(node.value);
-            case "h": return new elements.Heading(node.amount);
-            case "style": return new elements.Style();
-            case "script": return new elements.Script();
+            case "#": return new CommentElement(node.value);
+            case "h": return new HeadingElement(node.amount);
+            case "style": return new StyleElement();
+            case "script": return new ScriptElement();
             //case "tbl": return new elements.Table();
             //case "tbody": return new elements.TableBody();
             //case "tr": return new elements.TableRow();
             //case "th": return new elements.TableHeaderCell();
             //case "td": return new elements.TableDataCell();
-            case "hr": return new elements.HorizontalRule();
-            case "fragment": return new elements.Fragment();
+            case "hr": return new HorizontalRuleElement();
+            case "fragment": return new FragmentElement();
         }
 
         return new UnknownElement(node.name);

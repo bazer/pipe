@@ -3,7 +3,7 @@
 import program from 'commander';
 import fs from 'fs';
 import { HtmlEncoder } from '../html/htmlencoder';
-import AST from '../ast/ast';
+import { AST } from '../ast/ast';
 // Require logic.js file and extract controller functions using JS destructuring assignment
 
 program
@@ -30,10 +30,9 @@ program
       let html = encoder.getHtmlString(htmlNodes);
 
       fs.writeFile(newFile, html, err => {
-        console.log(err);
+        if (err)
+          console.log(err);
       })
-
-      //console.log(astNodes);
     });
     // addContact({firstname, lastname, phone, email});
   });

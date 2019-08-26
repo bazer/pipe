@@ -3,31 +3,31 @@ import { ASTElementWithValue } from "./ASTElementWithValue";
 import { ASTElementWithAmount } from "./ASTElementWithAmount";
 
 
-export class Fragment extends ASTElementWithValue {
+export class FragmentElement extends ASTElementWithValue {
     constructor(value?: string) {
         super("fragment", value);
     }
 }
 
-export class Comment extends ASTElementWithValue {
+export class CommentElement extends ASTElementWithValue {
     constructor(value?: string | null) {
         super("#", value);
     }
 }
 
-export class Style extends ASTElement {
+export class StyleElement extends ASTElement {
     constructor() {
         super("style");
     }
 }
 
-export class Script extends ASTElement {
+export class ScriptElement extends ASTElement {
     constructor() {
         super("script");
     }
 }
 
-export class Document extends ASTElement {
+export class DocumentElement extends ASTElement {
     // version: string;
 
     constructor() {
@@ -35,7 +35,7 @@ export class Document extends ASTElement {
     }
 }
 
-export class Paragraph extends ASTElement {
+export class ParagraphElement extends ASTElement {
     constructor() {
         super("p");
     }
@@ -45,7 +45,7 @@ export class Paragraph extends ASTElement {
     // } 
 }
 
-export class Color extends ASTElement {
+export class ColorElement extends ASTElement {
     public color() {
         return this.getArgument("color");
     }
@@ -57,53 +57,53 @@ export class Color extends ASTElement {
         this.setArgument("color", color);
     }
 }
-export class Italic extends ASTElement {
+export class ItalicElement extends ASTElement {
     constructor() {
         super("i", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
-export class Underline extends ASTElement {
+export class UnderlineElement extends ASTElement {
     constructor() {
         super("u", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
-export class Strikethrough extends ASTElement {
+export class StrikethroughElement extends ASTElement {
     constructor() {
         super("s", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
-export class UnorderedList extends ASTElement {
+export class UnorderedListElement extends ASTElement {
     constructor() {
         super("ul");
 
-        this.allowedParents = [ListItem];
+        this.allowedParents = [ListItemElement];
     }
 }
-export class OrderedList extends ASTElement {
+export class OrderedListElement extends ASTElement {
     constructor() {
         super("ol");
 
-        this.allowedParents = [ListItem];
+        this.allowedParents = [ListItemElement];
     }
 }
-export class ListItem extends ASTElement {
+export class ListItemElement extends ASTElement {
     constructor() {
         super("li");
 
-        this.allowedParents = [UnorderedList, OrderedList];
+        this.allowedParents = [UnorderedListElement, OrderedListElement];
     }
 }
 
-export class Bold extends ASTElement {
+export class BoldElement extends ASTElement {
     constructor() {
         super("b", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
-export class Image extends ASTElement {
+export class ImageElement extends ASTElement {
     public url() {
         return this.getArgument("url");
     }
@@ -118,7 +118,7 @@ export class Image extends ASTElement {
     }
 }
 
-export class Hyperlink extends ASTElement {
+export class HyperlinkElement extends ASTElement {
     public getUrl() {
         return this.getArgument("url");
     }
@@ -146,13 +146,13 @@ export class Hyperlink extends ASTElement {
     }
 }
 
-export class Heading extends ASTElementWithAmount {
+export class HeadingElement extends ASTElementWithAmount {
     constructor(size: number) {
         super("h", size);
     }
 }
 
-export class HorizontalRule extends ASTElement {
+export class HorizontalRuleElement extends ASTElement {
     constructor() {
         super("hr");
         this.canHaveChildren = false;

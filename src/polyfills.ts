@@ -1,18 +1,3 @@
-declare global {
-    interface Window {
-        NodeList: any;
-    }
-
-    interface Array<T> {
-        last(): T;
-        flatMap<E>(callback: (t: T) => Array<E>): Array<E>
-    }
-
-    interface HTMLElement {
-        attachEvent: any; //IE8
-    }
-}
-
 export class Polyfills {
     public static init() {
         if (!Array.prototype.last) {

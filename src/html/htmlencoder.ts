@@ -1,9 +1,9 @@
-import * as elements from '../elements/elements';
 import { ASTMixin } from '../ast/astbase';
-import AST from '../ast/ast';
+import { AST } from '../ast/ast';
 import { HtmlBase } from './htmlbase';
 import { JSDOM } from "jsdom";
 import { ASTElement, ASTElementLayout } from '../elements/ASTElement';
+import { DocumentElement } from '../elements/elements';
 const { document } = (new JSDOM(`...`)).window;
 
 export function ASTHtmlEncoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
@@ -57,7 +57,7 @@ export class HtmlEncoder extends HtmlBase {
             //     this.error(`Unknown element '${element.name}'`);
             // }
 
-            if (element instanceof elements.Document) {
+            if (element instanceof DocumentElement) {
                 this.getDomElements(element.children).forEach(newChild => {
                     acc.push(newChild);
                 });

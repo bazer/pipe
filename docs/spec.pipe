@@ -4,60 +4,13 @@
 :version(0.1)
 :encoding(utf-8)]
 
-h1|Pipe Markup Language Specification
+h1+|Pipe Markup Language Specification
 [i|Version 0.1]
 
 This specification describes the rules of the Pipe Markup Language. 
 
 [index]
-
-h+|Element syntax
-Everything is a Pipe element. An element has a r|name, a r|size, one or more r|properties and r|contents. 
-
-\[ denotes the start of an element, \] denotes the end. \| denotes the start of element contents. Everything after the \| up to the end of the element are contents of the element.
-
-An element can either be a block element or an inline element.
-
-h|Block elements
-Block elements are top level elements that contain other elements and can not be contained within text
-The brackets can be omitted if the element begins on a new line. The contents then end at the first subsequent newline character.
-Newlines are allowed after the name, between properties and between arguments in block elements.
-
-h|Inline elements
-Inline elements are contained within block elements and text. They are used to markup specific portions of text. 
-The brackets for inline elements can be omitted if no r|properties are declared. The contents then become the first word immediately following the \|. If the word is ended by one or more dots or commas, these are not included. It is allowed to bridge words by using a r|space_bridge, in this case all the bridged words are included and the space bridges counted as normal spaces.
-
-
-h|Name
-The first word after the start of the element is the element name.
-
-h|Size
-
-h:ref(property, properties)|Property
-Properties of an element are declared after the element name and must be preceded by a : character. A newline is also allowed in block elements. A property consists of a name and one or several arguments. The arguments are all enclosed in parenthesis and separated by commas. Arguments only have values and which argument is which is determined by order. An element can have a default property and if only the first argument of the default property is declared, the name of the property and the parenthesis can be omitted.
-
-
-h|Contents
-
-
-
-
-
-h|Text
-Text that is not enclosed in another element is implicitly a r|paragraph. An implicit r|paragraph containing a newline character automatically ends the current paragraph and starts a new one, unless there is an [r|explicit newline] somewhere in between where the current paragraph is and the new one would be.
-
-h|Word
-
-
-h|Spaces
-Spaces at the beginning of a line are discarded. More spaces than one in succession are discarded. Spaces at the beginning and at the end of a r|paragraph are discarded. Explicit spaces can be inserted using the [r|explicit space] element.
-
-h|Newlines
-Newlines are denoted solely by the \n character, all \r character are discarded. Newlines are only used to determine where elements end. Use [r:expnl|explicit newlines] to insert new lines in to text.
-
-h:ref(space_bridge)|Space bridges
-
-h|Comments
+include|syntax
 
 
 

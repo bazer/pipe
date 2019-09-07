@@ -66,8 +66,9 @@ export class HtmlEncoder extends HtmlBase {
                 var dom = this.resolveDomElement(element);
 
                 if (element.layout == ASTElementLayout.NewLine) {
-                    if (element.getAlign()) {
-                        (dom as HTMLElement).style.textAlign = element.getAlign();
+                    let align = element.getAlign();
+                    if (align != null) {
+                        (dom as HTMLElement).style.textAlign = align;
                     }
                 }
 

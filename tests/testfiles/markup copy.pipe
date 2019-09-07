@@ -1,0 +1,20 @@
+
+h1|Markup language
+p|From Wikipedia, the free encyclopedia[r:mw-head|Jump to navigation][r:p-search|Jump to search]For other uses, see[_][a url(https://en.wikipedia.org/wiki/Markup_\(disambiguation\))|Markup (disambiguation)].[a url(https://en.wikipedia.org/wiki/File:RecipeBook_XML_Example.png)|[img url(https://upload.wikimedia.org/wikipedia/en/thumb/e/ee/RecipeBook_XML_Example.png/220px-RecipeBook_XML_Example.png)]][a url(https://en.wikipedia.org/wiki/File:RecipeBook_XML_Example.png)]Example of RecipeBook, a simple language based on XML for creating recipes. The markup can be converted to[_][a url(https://en.wikipedia.org/wiki/HTML)|HTML],[_][a url(https://en.wikipedia.org/wiki/Portable_Document_Format)|PDF][_]and[_][a url(https://en.wikipedia.org/wiki/Rich_Text_Format)|Rich Text Format]using a[_][a url(https://en.wikipedia.org/wiki/Programming_language)|programming language][_]or[_][a url(https://en.wikipedia.org/wiki/Extensible_Stylesheet_Language)|XSL].
+
+
+p|In computer text processing, a b|markup_language is a system for [r:Annotation|annotating] a |document in a way that is |syntactically_distinguishable from the text.[a url(https://en.wikipedia.org/wiki/Markup_language#cite_note-1)|\[1\]][_]The idea and terminology evolved from the "marking up" of paper manuscripts, i.e., the revision instructions by editors, traditionally written with a[_][a url(https://en.wikipedia.org/wiki/Blue_pencil_\(editing\))|blue pencil][_]on authors'[_][a url(https://en.wikipedia.org/wiki/Manuscript)|manuscripts].\[[i|[a url(https://en.wikipedia.org/wiki/Wikipedia:Citation_needed)|citation needed]]\][_]In[_][a url(https://en.wikipedia.org/wiki/Digital_media)|digital media], this "blue pencil instruction text" was replaced by[_][a url(https://en.wikipedia.org/wiki/HTML_element)|tags], that is, instructions are expressed directly by tags or "instruction text encapsulated by tags." However the whole idea of a mark up language is to avoid the formatting work for the text, as the tags in the mark up language serve the purpose to format the appropriate text (like a header or beginning of a next para...etc.). Every tag used in a Markup language has a property to format the text we write.
+
+
+ref:document|h1|Document
+h1:ref(document)|Document
+
+
+replace:Annotation|a:url(https://en.wikipedia.org/wiki/Annotation)
+replace:document|a:url(https://en.wikipedia.org/wiki/Document)
+replace:syntactically_distinguishable|a:url(https://en.wikipedia.org/wiki/Syntax_\(logic\))
+replace:syntactically_distinguishable|a:url("https://en.wikipedia.org/wiki/Syntax_(logic)")
+
+
+[a:replace(Annotation):url(https://en.wikipedia.org/wiki/Annotation)]
+[a:replace(document):url(https://en.wikipedia.org/wiki/Document)]

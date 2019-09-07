@@ -1,4 +1,4 @@
-import InputStream from "./inputstream";
+import InputStream, { StreamPosition } from "./inputstream";
 
 export enum TokenType {
     ElementStart,
@@ -13,7 +13,8 @@ export enum TokenType {
 
 export interface Token {
     type: TokenType,
-    value: string
+    value: string,
+    position: StreamPosition
 }
 
 export class Lexer {
@@ -40,49 +41,56 @@ export class Lexer {
 
             return {
                 type: TokenType.ElementStart,
-                value: elementText
+                value: elementText,
+                position: this.input.getLastPos()
             }
         }
 
         if (this.isPunctuation(ch)) {
             return {
                 type: TokenType.Punctuation,
-                value: this.input.next()
+                value: this.input.next(),
+                position: this.input.getLastPos()
             }
         }
 
         if (this.isCloseAngleBracket(ch)) {
             return {
                 type: TokenType.ElementEnd,
-                value: this.input.next()
+                value: this.input.next(),
+                position: this.input.getLastPos()
             }
         }
 
         if (this.isOpenParenthesis(ch)) {
             return {
                 type: TokenType.PropertyStart,
-                value: this.input.next()
+                value: this.input.next(),
+                position: this.input.getLastPos()
             }
         }
 
         if (this.isCloseParenthesis(ch)) {
             return {
                 type: TokenType.PropertyEnd,
-                value: this.input.next()
+                value: this.input.next(),
+                position: this.input.getLastPos()
             }
         }
         
         if (this.isNewLine(ch)) {
             return {
                 type: TokenType.NewLine,
-                value: this.input.next()
+                value: this.input.next(),
+                position: this.input.getLastPos()
             }
         }
 
         if (this.isSpace(ch)) {
             return {
                 type: TokenType.Space,
-                value: this.input.next()
+                value: this.input.next(),
+                position: this.input.getLastPos()
             }
         }
 
@@ -90,7 +98,8 @@ export class Lexer {
 
         return {
             type: TokenType.Word,
-            value: text
+            value: text,
+            position: this.input.getLastPos()
         }
     }
 
@@ -184,7 +193,7 @@ export class Lexer {
     }
 
     public croak(msg: string) {
-        return this.input.croak(msg);
+        return this.input.error(msg);
     }
 }
 

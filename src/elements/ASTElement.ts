@@ -1,5 +1,6 @@
 import { AST } from "../ast/ast";
 import { Utils } from "./Utils";
+import { IParserNode } from "../shared/parsernode";
 
 
 export enum ASTElementLayout {
@@ -25,6 +26,12 @@ export interface Dictionary<T> {
 
 //export type AlignValue = "left" | "center" | "right" | "justify";
 
+// function activator<T extends IASTElement>(type: { new(): T ;} ): T {
+//     return new type();
+// }
+
+// var classA: ClassA = activator(ClassA);
+
 export interface IASTElement {
     arguments: Dictionary<string>;
     children: ASTElement[];
@@ -35,6 +42,8 @@ export interface IASTElement {
     handlesChildren: boolean;
     canHaveChildren: boolean;
     type: ASTElementType;
+    //create: (node: IParserNode) => IASTElement;
+    create(node: IParserNode): IASTElement;
 }
 
 export abstract class ASTElement implements IASTElement {
@@ -47,11 +56,15 @@ export abstract class ASTElement implements IASTElement {
     public handlesChildren = false;
     public canHaveChildren = true;
     public type: ASTElementType = ASTElementType.Container;
+
     constructor(name: string, layout: ASTElementLayout = ASTElementLayout.NewLine) {
         this.elementName = name.toLowerCase();
         this.layout = layout;
         this.id = Utils.getNewId(); // this.uuidv4();
     }
+
+    public abstract create(node: IParserNode): IASTElement;
+
     public getArgument(name: string): string | null {
         let value = this.arguments[name];
         if (value && value.length > 0)

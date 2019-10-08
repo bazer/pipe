@@ -1,16 +1,19 @@
 import { Lexer, TokenType, Token } from "./lexer";
 import { InputStream } from "./inputstream";
 import { IParserNode, ParserNode, ParserNodeProperty } from "../shared/parsernode";
+import { IASTElement } from "../elements/ASTElement";
 
 export class Parser {
     protected lexer: Lexer;
+    protected elements: IASTElement[];
 
-    constructor(input: string) {
+    constructor(input: string, elements: IASTElement[]) {
         this.lexer = new Lexer(new InputStream(input));
+        this.elements = elements;
     }
 
-    public parse(): IParserNode[] {
-        var nodes: IParserNode[] = [];
+    public parse(): IASTElement[] {
+        var nodes: IASTElement[] = [];
 
         while (!this.lexer.eof()) {
             // var token = this.lexer.peek();
@@ -21,7 +24,7 @@ export class Parser {
         return this.parseText(nodes);
     }
 
-    protected parseText(nodes: ParserNode[]): ParserNode[] {
+    protected parseText(nodes: IASTElement[]): IASTElement[] {
         var textNodes: ParserNode[] = [];
         var list = nodes.reduce((acc: ParserNode[], node) => {
             if (node.name == "w" || node.name == "_") {
@@ -54,12 +57,12 @@ export class Parser {
         return list;
     }
     
-    protected parseNode(): IParserNode {
+    protected parseNode(): IASTElement {
         var node: IParserNode | null = null;
 
         var token = this.lexer.next();
 
-        if (token.type == TokenType.ElementStart) {
+        if (token.type == TokenType.Control) {
             let nodeNameSplit = token.value.split(/(\d+)/).filter(Boolean);
 
             node = new ParserNode(nodeNameSplit[0], null, true);
@@ -163,7 +166,7 @@ export class Parser {
     }
 
     protected croak(msg: string) {
-        return this.lexer.croak(msg);
+        return this.lexer.error(msg);
     }
 }
 

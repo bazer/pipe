@@ -2,12 +2,16 @@ import { ASTMixin } from '../ast/astbase';
 import { AST } from '../ast/ast';
 import { HtmlBase } from './htmlbase';
 import { JSDOM } from "jsdom";
-import { ASTElement, ASTElementLayout } from '../elements/ASTElement';
+import { ASTElement, ASTElementLayout, IASTElement } from '../elements/ASTElement';
 import { DocumentElement } from '../elements/elements';
+import { IParserNode } from '../shared/parsernode';
 const { document } = (new JSDOM(`...`)).window;
 
 export function ASTHtmlEncoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
     return class extends mixinClass {
+        public create(node: IParserNode): IASTElement {
+            throw new Error("Method not implemented.");
+        }
         constructor(...args: any[]) {
             super(...args);
         }

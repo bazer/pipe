@@ -1,33 +1,58 @@
-import { ASTElement, ASTElementLayout, ASTElementType } from "./ASTElement";
+import { ASTElement, ASTElementLayout, ASTElementType, IASTElement } from "./ASTElement";
 import { ASTElementWithValue } from "./ASTElementWithValue";
 import { ASTElementWithAmount } from "./ASTElementWithAmount";
+import { IParserNode } from "../shared/parsernode";
 
+
+// export class StandardElement extends ASTElement {
+//     public create(): IASTElement {
+        
+//     }
+//     constructor(name: string, layout?: ASTElementLayout) {
+//         super(name, layout);
+//     }
+// }
 
 export class FragmentElement extends ASTElementWithValue {
-    constructor(value?: string) {
+    public create(node: IParserNode): IASTElement {
+        return new FragmentElement(node.value);
+    }
+    constructor(value?: string | null) {
         super("fragment", value);
     }
 }
 
 export class CommentElement extends ASTElementWithValue {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor(value?: string | null) {
         super("#", value);
     }
 }
 
 export class StyleElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("style");
     }
 }
 
 export class ScriptElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("script");
     }
 }
 
 export class DocumentElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     // version: string;
 
     constructor() {
@@ -36,6 +61,9 @@ export class DocumentElement extends ASTElement {
 }
 
 export class ParagraphElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("p");
     }
@@ -46,6 +74,9 @@ export class ParagraphElement extends ASTElement {
 }
 
 export class ColorElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     public color() {
         return this.getArgument("color");
     }
@@ -58,24 +89,36 @@ export class ColorElement extends ASTElement {
     }
 }
 export class ItalicElement extends ASTElement {
+    public create(): IASTElement {
+        return new ItalicElement();
+    }
     constructor() {
         super("i", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
 export class UnderlineElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("u", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
 export class StrikethroughElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("s", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
 export class UnorderedListElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("ul");
 
@@ -83,6 +126,9 @@ export class UnorderedListElement extends ASTElement {
     }
 }
 export class OrderedListElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("ol");
 
@@ -90,6 +136,9 @@ export class OrderedListElement extends ASTElement {
     }
 }
 export class ListItemElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("li");
 
@@ -98,12 +147,18 @@ export class ListItemElement extends ASTElement {
 }
 
 export class BoldElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("b", ASTElementLayout.Inline);
         this.type = ASTElementType.TextModifier;
     }
 }
 export class ImageElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     public url() {
         return this.getArgument("url");
     }
@@ -119,6 +174,9 @@ export class ImageElement extends ASTElement {
 }
 
 export class HyperlinkElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     public getUrl() {
         return this.getArgument("url");
     }
@@ -147,12 +205,18 @@ export class HyperlinkElement extends ASTElement {
 }
 
 export class HeadingElement extends ASTElementWithAmount {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor(size: number) {
         super("h", size);
     }
 }
 
 export class HorizontalRuleElement extends ASTElement {
+    public create(): IASTElement {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         super("hr");
         this.canHaveChildren = false;

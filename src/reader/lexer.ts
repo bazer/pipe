@@ -1,14 +1,20 @@
 import InputStream, { StreamPosition } from "./inputstream";
 
 export enum TokenType {
-    ElementStart,
-    ElementEnd,
-    PropertyStart,
-    PropertyEnd,
-    Punctuation,
-    NewLine,
-    Word,
-    Space
+    // ElementStart,
+    // ElementEnd,
+    // PropertyStart,
+    // PropertyEnd,
+    // Punctuation,
+    // NewLine,
+    // Word,
+    // Space,
+    
+    Text,
+    Space,
+    Keyword,
+    Comment,
+    Control
 }
 
 export interface Token {
@@ -27,90 +33,137 @@ export class Lexer {
 
 
     protected readNext(): Token | null {
-        this.readWhile(ch => this.isWhitespace(ch));
+        //this.readWhile(ch => this.isWhitespace(ch));
         
         if (this.input.eof()) 
             return null;
 
-        var ch = this.input.peek();
+        let ch = this.input.next();
+        let pos = this.input.getLastPos();
 
-        if (this.isOpenAngleBracket(ch)) {
-            this.reportPunctuation = true;
-            this.input.next();
-            var elementText = this.readWhile(x => this.isWord(x));
+        // if (this.isOpenAngleBracket(ch)) {
+        //     this.reportPunctuation = true;
+        //     this.input.next();
+        //     var elementText = this.readWhile(x => this.isWord(x));
 
-            return {
-                type: TokenType.ElementStart,
-                value: elementText,
-                position: this.input.getLastPos()
-            }
-        }
+        //     return {
+        //         type: TokenType.ElementStart,
+        //         value: elementText,
+        //         position: this.input.getLastPos()
+        //     }
+        // }
 
-        if (this.isPunctuation(ch)) {
-            return {
-                type: TokenType.Punctuation,
-                value: this.input.next(),
-                position: this.input.getLastPos()
-            }
-        }
+        // if (this.isPunctuation(ch)) {
+        //     return {
+        //         type: TokenType.Punctuation,
+        //         value: this.input.next(),
+        //         position: this.input.getLastPos()
+        //     }
+        // }
 
-        if (this.isCloseAngleBracket(ch)) {
-            return {
-                type: TokenType.ElementEnd,
-                value: this.input.next(),
-                position: this.input.getLastPos()
-            }
-        }
+        // if (this.isCloseAngleBracket(ch)) {
+        //     return {
+        //         type: TokenType.ElementEnd,
+        //         value: this.input.next(),
+        //         position: this.input.getLastPos()
+        //     }
+        // }
 
-        if (this.isOpenParenthesis(ch)) {
-            return {
-                type: TokenType.PropertyStart,
-                value: this.input.next(),
-                position: this.input.getLastPos()
-            }
-        }
+        // if (this.isOpenParenthesis(ch)) {
+        //     return {
+        //         type: TokenType.PropertyStart,
+        //         value: this.input.next(),
+        //         position: this.input.getLastPos()
+        //     }
+        // }
 
-        if (this.isCloseParenthesis(ch)) {
-            return {
-                type: TokenType.PropertyEnd,
-                value: this.input.next(),
-                position: this.input.getLastPos()
-            }
-        }
+        // if (this.isCloseParenthesis(ch)) {
+        //     return {
+        //         type: TokenType.PropertyEnd,
+        //         value: this.input.next(),
+        //         position: this.input.getLastPos()
+        //     }
+        // }
         
-        if (this.isNewLine(ch)) {
+        // if (this.isNewLine(ch)) {
+        //     return {
+        //         type: TokenType.NewLine,
+        //         value: this.input.next(),
+        //         position: this.input.getLastPos()
+        //     }
+        // }
+
+        if (this.isComment(ch)) {
             return {
-                type: TokenType.NewLine,
-                value: this.input.next(),
-                position: this.input.getLastPos()
+                type: TokenType.Comment,
+                value: ch,
+                position: pos
+            }
+        }
+
+        if (this.isCommentPart(ch) && this.isComment(ch + this.input.peek())) {
+            return {
+                type: TokenType.Comment,
+                value: ch + this.input.next(),
+                position: pos
+            }
+        }
+
+        if (this.isControl(ch)) {
+            return {
+                type: TokenType.Control,
+                value: ch,
+                position: pos
+            }
+        }
+
+        if (this.isKeyword(ch)) {
+            return {
+                type: TokenType.Keyword,
+                value: ch,
+                position: pos
             }
         }
 
         if (this.isSpace(ch)) {
             return {
                 type: TokenType.Space,
-                value: this.input.next(),
-                position: this.input.getLastPos()
+                value: ch,
+                position: pos
             }
         }
 
-        var text = this.readWhile(x => this.isWord(x));
+        let text = ch + this.readWhile(x => this.isWord(x));
 
         return {
-            type: TokenType.Word,
+            type: TokenType.Text,
             value: text,
-            position: this.input.getLastPos()
+            position: pos
         }
     }
 
+    isKeyword(ch: string) {
+        return "[]|():,.+-\"_".indexOf(ch) >= 0; //'\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
+    }
+
+    isComment(ch: string) {
+        return "%".indexOf(ch) >= 0
+        || ch === "/:"
+        || ch === ":/";
+    }
+
+    isCommentPart(ch: string) {
+        return "/:".indexOf(ch) >= 0;
+    }
+
+    isControl(ch: string) {
+        return "\n\r\t".indexOf(ch) >= 0; //'\n', '\r', '\t'
+    }
+
     isWord(ch: string){
-        return !(this.isOpenAngleBracket(ch) 
-        || this.isCloseAngleBracket(ch) 
-        || this.isOpenParenthesis(ch) 
-        || this.isCloseParenthesis(ch) 
-        || this.isPunctuation(ch) 
-        || this.isNewLine(ch) 
-        || this.isWhitespace(ch) 
+        return !(this.isKeyword(ch) 
+        || this.isControl(ch) 
+        || this.isCommentPart(ch) 
         || this.isSpace(ch));
     }
 
@@ -118,37 +171,37 @@ export class Lexer {
         return "\\".indexOf(ch) >= 0;
     }
 
-    isOpenAngleBracket(ch: string) {
-        return "[".indexOf(ch) >= 0;
-    }
+    // isOpenAngleBracket(ch: string) {
+    //     return "[".indexOf(ch) >= 0;
+    // }
 
-    isCloseAngleBracket(ch: string) {
-        return "]".indexOf(ch) >= 0;
-    }
+    // isCloseAngleBracket(ch: string) {
+    //     return "]".indexOf(ch) >= 0;
+    // }
 
-    isOpenParenthesis(ch: string) {
-        return this.reportPunctuation && "(".indexOf(ch) >= 0;
-    }
+    // isOpenParenthesis(ch: string) {
+    //     return this.reportPunctuation && "(".indexOf(ch) >= 0;
+    // }
 
-    isCloseParenthesis(ch: string) {
-        return this.reportPunctuation && ")".indexOf(ch) >= 0;
-    }
+    // isCloseParenthesis(ch: string) {
+    //     return this.reportPunctuation && ")".indexOf(ch) >= 0;
+    // }
 
     // isPipe(ch: string) {
     //     return "|".indexOf(ch) >= 0;
     // }
 
-    isPunctuation(ch: string) {
-        return this.reportPunctuation && "|,".indexOf(ch) >= 0;
-    }
+    // isPunctuation(ch: string) {
+    //     return this.reportPunctuation && "|,".indexOf(ch) >= 0;
+    // }
 
-    isNewLine(ch: string) {
-        return "\n".indexOf(ch) >= 0;
-    }
+    // isNewLine(ch: string) {
+    //     return "\n".indexOf(ch) >= 0;
+    // }
 
-    isWhitespace(ch: string) {
-        return "\t\r".indexOf(ch) >= 0;
-    }
+    // isWhitespace(ch: string) {
+    //     return "\t\r".indexOf(ch) >= 0;
+    // }
 
     isSpace(ch: string) {
         return " ".indexOf(ch) >= 0;
@@ -182,7 +235,7 @@ export class Lexer {
         let next = tok || this.readNext();
 
         if (next == null){
-            throw this.croak("Encountered null token");
+            throw this.error("Encountered null token");
         }
 
         return next;
@@ -192,7 +245,7 @@ export class Lexer {
         return this.peek() == null;
     }
 
-    public croak(msg: string) {
+    public error(msg: string) {
         return this.input.error(msg);
     }
 }

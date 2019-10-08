@@ -39,4 +39,31 @@ describe('Parser test suite', function() {
     assert.equal(result[0].children[0].children.length, 9);
   });
 
+
+  it('can parse element without brackets', function() {
+    let parser = new Parser("b|Lorem");
+    let result = parser.parse();
+
+    assert.isNotEmpty(result);
+    assert.equal(result.length, 1);
+    assert.equal(result[0].name, "h");
+    assert.equal(result[0].amount, 1);
+    assert.equal(result[0].children.length, 1);
+    assert.equal(result[0].children[0].name, "t");
+    assert.equal(result[0].children[0].children.length, 9);
+  });
+
+  it('can parse element without brackets', function() {
+    let parser = new Parser("b|Lorem_ipsum_dolor_sit_amet");
+    let result = parser.parse();
+  
+    assert.isNotEmpty(result);
+    assert.equal(result.length, 1);
+    assert.equal(result[0].name, "h");
+    assert.equal(result[0].amount, 1);
+    assert.equal(result[0].children.length, 1);
+    assert.equal(result[0].children[0].name, "t");
+    assert.equal(result[0].children[0].children.length, 9);
+  });
+
 });

@@ -19,15 +19,14 @@ Immediately after the name an optional size can be declared with a number. For i
 h|Size modifier
 A |size can be modified by using + and - instead of a number. The size is then added or subtracted from the last declared size of the same element type, eg. |header, and then applied. A size modifier can also be added after the number, it then applies to the size of the next element of the same type.
 
-h:ref(property, properties)|Property
+h:ref("property", "properties")|Property
 Properties of an element are declared after the element name and size and must be preceded by a b|: character. A newline is also allowed in block elements. A property consists of a name and one or several arguments. The arguments are all enclosed in parenthesis and separated by commas. Arguments can be inclosed by " and will then be read as text, without the need for escaping. Arguments only have values and which argument is which is determined by order. An element can have a default property and if only the first argument of the default property is declared, the name of the property and the parenthesis can be omitted.
 
 h|Contents
 The contents of the element follows the \|-character. The contents can be either text, elements or both. In this way elements can be nested to an arbitrary depth.
 
-
 h|Text
-Text that is not enclosed in another element is implicitly a r|paragraph. An implicit r|paragraph containing a newline character automatically ends the current paragraph and starts a new one, unless there is an [r|explicit newline] somewhere in between where the current paragraph is and the new one would be.
+
 
 h|Word
 
@@ -38,7 +37,7 @@ Spaces at the beginning of a line are discarded. More spaces than one in success
 h|Newlines
 Newlines are denoted solely by the \n character, all \r character are discarded. Newlines are only used to determine where elements end. Use [r:expnl|explicit newlines] to insert new lines in to text.
 
-h:ref(space_bridge)|Space bridges
+h:ref("space_bridge")|Space bridges
 
 
 An element can either be a block element or an inline element.

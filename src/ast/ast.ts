@@ -2,7 +2,7 @@ import { NewLineElement } from "../elements/core/NewLineElement";
 import { ParserNode, IParserNode } from "../shared/parsernode";
 import { ParseResult, ASTBase, ASTMixin } from "./astbase";
 import { Parser } from "../reader/parser";
-import { ASTElement, ASTElementLayout, ASTElementType } from "../elements/ASTElement";
+import { PipeElement, ASTElementLayout, ASTElementType } from "../elements/ASTElement";
 import { TextElement } from "../elements/core/TextElement";
 import { WordElement } from "../elements/core/WordElement";
 import { SpaceElement } from "../elements/core/SpaceElement";
@@ -11,11 +11,11 @@ import { ParagraphElement, CommentElement } from "../elements/elements";
 
 export class AST extends ASTBase {
 
-    constructor(extensionElements: (ASTMixin<ASTElement>)[] = []) {
+    constructor(extensionElements: (ASTMixin<PipeElement>)[] = []) {
         super(extensionElements);
     }
 
-    public decode(input: string): ASTElement[] {
+    public decode(input: string): PipeElement[] {
         if (input == null)
             return [];
 
@@ -35,7 +35,7 @@ export class AST extends ASTBase {
         return list;
     }
 
-    protected getASTElements(input: IParserNode): ASTElement {
+    protected getASTElements(input: IParserNode): PipeElement {
         if (!this.isASTElementType(input)) {
             throw this.error(`Unknown element '${input.name}'`);
         }
@@ -48,7 +48,7 @@ export class AST extends ASTBase {
         return element;
     }
 
-    public getNumChars(elements: ASTElement[]) {
+    public getNumChars(elements: PipeElement[]) {
         return elements.reduce((acc, x) => x.charLength() + acc, 0);
     }
 
@@ -66,7 +66,7 @@ export class AST extends ASTBase {
     //     return numChars;
     // }
 
-    public format(elements: ASTElement[]) {
+    public format(elements: PipeElement[]) {
 
         //elements = this.convertParagraphToNewLines(elements);
         elements = elements.flatMap(x => this.removeUnknownElements(x));
@@ -83,7 +83,7 @@ export class AST extends ASTBase {
         return results;
     }
 
-    public insert(original: ASTElement[], paste: ASTElement[], offset: number) {
+    public insert(original: PipeElement[], paste: PipeElement[], offset: number) {
 
         let list = this.insertNewLineAtEndInParagraphs(original);
         list = this.insertIntoElement(list, paste, offset);
@@ -127,16 +127,16 @@ export class AST extends ASTBase {
     // }
 
 
-    protected insertIntoElement(originalElements: ASTElement[], elementsToInsert: ASTElement[], charIndex: number) {
+    protected insertIntoElement(originalElements: PipeElement[], elementsToInsert: PipeElement[], charIndex: number) {
         if (originalElements.length == 0) {
             return elementsToInsert.map(x => this.cloneElement(x, true));
         }
 
         let charCount = 0;
         let inserted = false;
-        let list = originalElements.reduce((acc: ASTElement[], element: ASTElement) => {
+        let list = originalElements.reduce((acc: PipeElement[], element: PipeElement) => {
             if (!inserted && charCount + element.charLength() >= charIndex) {
-                let elementsToPush: ASTElement[] = [];
+                let elementsToPush: PipeElement[] = [];
 
                 elementsToInsert.forEach(x => {
                     elementsToPush.push(this.cloneElement(x, true));
@@ -297,7 +297,7 @@ export class AST extends ASTBase {
         return [firstElement, secondElement];
     }
 
-    protected pushIfNotEmpty(list: ASTElement[], element: ASTElement) {
+    protected pushIfNotEmpty(list: PipeElement[], element: PipeElement) {
         if (element.charLength() > 0)
             list.push(element);
     }
@@ -317,8 +317,8 @@ export class AST extends ASTBase {
     }
 
 
-    public convertParagraphToNewLines(children: ASTElement[]): ASTElement[] {
-        var list = children.reduce((acc: ASTElement[], child) => {
+    public convertParagraphToNewLines(children: PipeElement[]): PipeElement[] {
+        var list = children.reduce((acc: PipeElement[], child) => {
             if (child instanceof ParagraphElement) {
                 acc.push(new NewLineElement(2));
 
@@ -343,8 +343,8 @@ export class AST extends ASTBase {
     }
 
 
-    public removeUnknownElements(element: ASTElement): ASTElement[] {
-        let children: ASTElement[] = [];
+    public removeUnknownElements(element: PipeElement): PipeElement[] {
+        let children: PipeElement[] = [];
 
         element.children.forEach(child => {
             this.removeUnknownElements(child).forEach(newChild => {
@@ -362,8 +362,8 @@ export class AST extends ASTBase {
         return [newElement];
     }
 
-    public removeComments(element: ASTElement): ASTElement[] {
-        let children: ASTElement[] = [];
+    public removeComments(element: PipeElement): PipeElement[] {
+        let children: PipeElement[] = [];
 
         element.children.forEach(child => {
             this.removeComments(child).forEach(newChild => {
@@ -381,8 +381,8 @@ export class AST extends ASTBase {
         return [newElement];
     }
 
-    public formatText(children: ASTElement[]): ASTElement[] {
-        return children.reduce((acc: ASTElement[], child) => {
+    public formatText(children: PipeElement[]): PipeElement[] {
+        return children.reduce((acc: PipeElement[], child) => {
             if (child instanceof TextElement) {
                 this.removeSpaces(child, acc.length > 0 && acc.last() instanceof NewLineElement)
                     .forEach(x => acc.push(x));
@@ -402,9 +402,9 @@ export class AST extends ASTBase {
 
     }
 
-    public removeSpaces(text: TextElement, precededByNewLine = false): ASTElement[] {
+    public removeSpaces(text: TextElement, precededByNewLine = false): PipeElement[] {
         var count = 0;
-        var list = text.children.reduce((acc: ASTElement[], child) => {
+        var list = text.children.reduce((acc: PipeElement[], child) => {
             if (child instanceof SpaceElement && !child.explicit) {
                 count += child.amount;
             }
@@ -469,9 +469,9 @@ export class AST extends ASTBase {
     //     return list;
     // }
 
-    public removeNewLines(children: ASTElement[]): ASTElement[] {
+    public removeNewLines(children: PipeElement[]): PipeElement[] {
         var count = 0;
-        var list = children.reduce((acc: ASTElement[], child) => {
+        var list = children.reduce((acc: PipeElement[], child) => {
             if (child instanceof NewLineElement && !child.explicit) {
                 count += child.amount;
             }
@@ -533,8 +533,8 @@ export class AST extends ASTBase {
     // }
 
 
-    public removeNewLineAtEndFromParagraphs(list: ASTElement[]) {
-        return list.reduce((acc: ASTElement[], element) => {
+    public removeNewLineAtEndFromParagraphs(list: PipeElement[]) {
+        return list.reduce((acc: PipeElement[], element) => {
             let children = element.children;
 
             if (element instanceof ParagraphElement) {
@@ -552,8 +552,8 @@ export class AST extends ASTBase {
         }, [])
     }
 
-    public insertNewLineAtEndInParagraphs(list: ASTElement[]) {
-        return list.reduce((acc: ASTElement[], element) => {
+    public insertNewLineAtEndInParagraphs(list: PipeElement[]) {
+        return list.reduce((acc: PipeElement[], element) => {
             let children = element.children;
 
             if (element instanceof ParagraphElement) {
@@ -571,11 +571,11 @@ export class AST extends ASTBase {
         }, [])
     }
 
-    public insertParagraphs(children: ASTElement[]) {
+    public insertParagraphs(children: PipeElement[]) {
         var count = 0;
-        var savedChildren: ASTElement[] = [];
+        var savedChildren: PipeElement[] = [];
 
-        var list = children.reduce((acc: ASTElement[], child) => {
+        var list = children.reduce((acc: PipeElement[], child) => {
             if (child instanceof NewLineElement && !child.explicit) {
                 count += child.amount;
             }

@@ -1,5 +1,5 @@
-import { ASTElement, ASTElementLayout } from "./ASTElement";
-export abstract class ASTElementWithValue extends ASTElement {
+import { PipeElement, ASTElementLayout } from "./ASTElement";
+export abstract class ASTElementWithValue extends PipeElement {
     public value: string;
     constructor(name: string, value?: string | null, layout: ASTElementLayout = ASTElementLayout.NewLine) {
         super(name, layout);

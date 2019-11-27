@@ -49,5 +49,5 @@ Newlines are allowed after the name, between properties and between arguments in
 
 h|Inline elements
 Inline elements are contained within block elements and text. They are used to markup specific portions of text. 
-The brackets for inline elements can be omitted if no r|properties are declared. The contents then become the first word immediately following the \|. If the word is ended by one or more dots or commas, these are not included. It is allowed to bridge words by using a r|space_bridge, in this case all the bridged words are included and the space bridges counted as normal spaces.
+The brackets for inline elements can be omitted if no r|properties are declared. The contents then become the first word immediately following the \|. If the word is ended by one or more dots, commas, colons or semicolons, these are not included. It is allowed to bridge words by using a r|space_bridge, in this case all the bridged words are included and the space bridges counted as normal spaces.
 

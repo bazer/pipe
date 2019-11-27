@@ -1,19 +1,19 @@
 import { AST } from '../ast/ast';
 import { ParseResult, ASTMixin } from '../ast/astbase';
 import { HtmlBase } from './htmlbase';
-import { ASTElement, ASTElementLayout } from '../elements/ASTElement';
+import { PipeElement, ASTElementLayout } from '../elements/ASTElement';
 import { SpaceElement } from '../elements/core/SpaceElement';
 import { NewLineElement } from '../elements/core/NewLineElement';
 import { CommentElement, FragmentElement, StyleElement, ScriptElement, ParagraphElement } from '../elements/elements';
 
 
-export function ASTHtmlDecoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
+export function ASTHtmlDecoderMixin<T extends ASTMixin<PipeElement>>(mixinClass: T) {
     return class extends mixinClass {
         constructor(...args: any[]) {
             super(...args);
         }
 
-        public static FromHtml(htmlElement: HTMLElement): ASTElement {
+        public static FromHtml(htmlElement: HTMLElement): PipeElement {
             let html = new HtmlDecoder();
             return html.getASTElementFromHTML(htmlElement);
         }
@@ -69,8 +69,8 @@ export class HtmlDecoder extends HtmlBase {
         return results;
     }
 
-    public getASTElements(nodes: Node[]): ASTElement[] {
-        var list = nodes.reduce((acc: ASTElement[], node) => {
+    public getASTElements(nodes: Node[]): PipeElement[] {
+        var list = nodes.reduce((acc: PipeElement[], node) => {
 
             let element = this.getASTElementFromHTML(node);
 
@@ -98,9 +98,9 @@ export class HtmlDecoder extends HtmlBase {
     }
 
 
-    public reformatTextFromHtml(children: ASTElement[]): ASTElement[] {
+    public reformatTextFromHtml(children: PipeElement[]): PipeElement[] {
         var count = 0;
-        var list = children.reduce((acc: ASTElement[], child) => {
+        var list = children.reduce((acc: PipeElement[], child) => {
             if (child instanceof NewLineElement && !child.explicit) {
                 count += child.amount;
             }
@@ -130,8 +130,8 @@ export class HtmlDecoder extends HtmlBase {
         return list;
     }
 
-    public convertDivToNewLine(children: ASTElement[]): ASTElement[] {
-        var list = children.reduce((acc: ASTElement[], child) => {
+    public convertDivToNewLine(children: PipeElement[]): PipeElement[] {
+        var list = children.reduce((acc: PipeElement[], child) => {
             if (child.elementName == "div") {
                 if (acc.length > 0 && !(acc.last() instanceof NewLineElement))
                     acc.push(new NewLineElement());
@@ -178,9 +178,9 @@ export class HtmlDecoder extends HtmlBase {
     //     }, [])
     // }
 
-    public removeFragments(children: ASTElement[]): ASTElement[] {
+    public removeFragments(children: PipeElement[]): PipeElement[] {
         let hasReachedendFragment = false;
-        return children.reduce((acc: ASTElement[], child) => {
+        return children.reduce((acc: PipeElement[], child) => {
             if (child instanceof CommentElement) {
                 if (child.value.toLowerCase() === "startfragment") {
                     return [];
@@ -207,8 +207,8 @@ export class HtmlDecoder extends HtmlBase {
         }, [])
     }
 
-    public removeStyleAndScript(element: ASTElement): ASTElement[] {
-        let children: ASTElement[] = [];
+    public removeStyleAndScript(element: PipeElement): PipeElement[] {
+        let children: PipeElement[] = [];
 
         element.children.forEach(child => {
             this.removeStyleAndScript(child).forEach(newChild => {

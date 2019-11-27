@@ -2,14 +2,14 @@ import { ASTMixin } from '../ast/astbase';
 import { AST } from '../ast/ast';
 import { HtmlBase } from './htmlbase';
 import { JSDOM } from "jsdom";
-import { ASTElement, ASTElementLayout, IASTElement } from '../elements/ASTElement';
+import { PipeElement, ASTElementLayout, IPipeElement } from '../elements/ASTElement';
 import { DocumentElement } from '../elements/elements';
 import { IParserNode } from '../shared/parsernode';
 const { document } = (new JSDOM(`...`)).window;
 
-export function ASTHtmlEncoderMixin<T extends ASTMixin<ASTElement>>(mixinClass: T) {
+export function ASTHtmlEncoderMixin<T extends ASTMixin<PipeElement>>(mixinClass: T) {
     return class extends mixinClass {
-        public create(node: IParserNode): IASTElement {
+        public create(node: IParserNode): IPipeElement {
             throw new Error("Method not implemented.");
         }
         constructor(...args: any[]) {
@@ -41,7 +41,7 @@ export class HtmlEncoder extends HtmlBase {
         return htmlElement.innerHTML;
     }
 
-    public encode(astElements: ASTElement[], insertParagraphs = false): Node[] {
+    public encode(astElements: PipeElement[], insertParagraphs = false): Node[] {
         let ast = new AST(this.extensionElements);
 
         if (insertParagraphs)
@@ -55,7 +55,7 @@ export class HtmlEncoder extends HtmlBase {
         return domElements;
     }
 
-    public getDomElements(children: ASTElement[]): Node[] {
+    public getDomElements(children: PipeElement[]): Node[] {
         var list = children.reduce((acc: Node[], element) => {
             // if (!this.isDOMElementType(element)) {
             //     this.error(`Unknown element '${element.name}'`);
@@ -89,7 +89,7 @@ export class HtmlEncoder extends HtmlBase {
         return list;
     }
 
-    public resolveDomElement(element: ASTElement): HTMLElement | Text | Comment {
+    public resolveDomElement(element: PipeElement): HTMLElement | Text | Comment {
         let matches = this.encodeExtensionElements.filter(x => {
             //let result = x.call(this);
             //console.log(x.prototype);

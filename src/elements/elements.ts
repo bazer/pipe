@@ -1,4 +1,4 @@
-import { ASTElement, ASTElementLayout, ASTElementType, IASTElement } from "./ASTElement";
+import { PipeElement, ASTElementLayout, ASTElementType, IPipeElement } from "./ASTElement";
 import { ASTElementWithValue } from "./ASTElementWithValue";
 import { ASTElementWithAmount } from "./ASTElementWithAmount";
 import { IParserNode } from "../shared/parsernode";
@@ -14,7 +14,7 @@ import { IParserNode } from "../shared/parsernode";
 // }
 
 export class FragmentElement extends ASTElementWithValue {
-    public create(node: IParserNode): IASTElement {
+    public create(node: IParserNode): IPipeElement {
         return new FragmentElement(node.value);
     }
     constructor(value?: string | null) {
@@ -23,7 +23,7 @@ export class FragmentElement extends ASTElementWithValue {
 }
 
 export class CommentElement extends ASTElementWithValue {
-    public create(): IASTElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor(value?: string | null) {
@@ -31,8 +31,8 @@ export class CommentElement extends ASTElementWithValue {
     }
 }
 
-export class StyleElement extends ASTElement {
-    public create(): IASTElement {
+export class StyleElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -40,8 +40,8 @@ export class StyleElement extends ASTElement {
     }
 }
 
-export class ScriptElement extends ASTElement {
-    public create(): IASTElement {
+export class ScriptElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -49,8 +49,8 @@ export class ScriptElement extends ASTElement {
     }
 }
 
-export class DocumentElement extends ASTElement {
-    public create(): IASTElement {
+export class DocumentElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     // version: string;
@@ -60,8 +60,8 @@ export class DocumentElement extends ASTElement {
     }
 }
 
-export class ParagraphElement extends ASTElement {
-    public create(): IASTElement {
+export class ParagraphElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -73,8 +73,8 @@ export class ParagraphElement extends ASTElement {
     // } 
 }
 
-export class ColorElement extends ASTElement {
-    public create(): IASTElement {
+export class ColorElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     public color() {
@@ -88,8 +88,8 @@ export class ColorElement extends ASTElement {
         this.setArgument("color", color);
     }
 }
-export class ItalicElement extends ASTElement {
-    public create(): IASTElement {
+export class ItalicElement extends PipeElement {
+    public create(): IPipeElement {
         return new ItalicElement();
     }
     constructor() {
@@ -97,8 +97,8 @@ export class ItalicElement extends ASTElement {
         this.type = ASTElementType.TextModifier;
     }
 }
-export class UnderlineElement extends ASTElement {
-    public create(): IASTElement {
+export class UnderlineElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -106,8 +106,8 @@ export class UnderlineElement extends ASTElement {
         this.type = ASTElementType.TextModifier;
     }
 }
-export class StrikethroughElement extends ASTElement {
-    public create(): IASTElement {
+export class StrikethroughElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -115,8 +115,8 @@ export class StrikethroughElement extends ASTElement {
         this.type = ASTElementType.TextModifier;
     }
 }
-export class UnorderedListElement extends ASTElement {
-    public create(): IASTElement {
+export class UnorderedListElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -125,8 +125,8 @@ export class UnorderedListElement extends ASTElement {
         this.allowedParents = [ListItemElement];
     }
 }
-export class OrderedListElement extends ASTElement {
-    public create(): IASTElement {
+export class OrderedListElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -135,8 +135,8 @@ export class OrderedListElement extends ASTElement {
         this.allowedParents = [ListItemElement];
     }
 }
-export class ListItemElement extends ASTElement {
-    public create(): IASTElement {
+export class ListItemElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -146,8 +146,8 @@ export class ListItemElement extends ASTElement {
     }
 }
 
-export class BoldElement extends ASTElement {
-    public create(): IASTElement {
+export class BoldElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {
@@ -155,8 +155,8 @@ export class BoldElement extends ASTElement {
         this.type = ASTElementType.TextModifier;
     }
 }
-export class ImageElement extends ASTElement {
-    public create(): IASTElement {
+export class ImageElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     public url() {
@@ -173,8 +173,8 @@ export class ImageElement extends ASTElement {
     }
 }
 
-export class HyperlinkElement extends ASTElement {
-    public create(): IASTElement {
+export class HyperlinkElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     public getUrl() {
@@ -205,7 +205,7 @@ export class HyperlinkElement extends ASTElement {
 }
 
 export class HeadingElement extends ASTElementWithAmount {
-    public create(): IASTElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor(size: number) {
@@ -213,8 +213,8 @@ export class HeadingElement extends ASTElementWithAmount {
     }
 }
 
-export class HorizontalRuleElement extends ASTElement {
-    public create(): IASTElement {
+export class HorizontalRuleElement extends PipeElement {
+    public create(): IPipeElement {
         throw new Error("Method not implemented.");
     }
     constructor() {

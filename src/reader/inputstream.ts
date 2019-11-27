@@ -1,8 +1,4 @@
-export interface StreamPosition {
-    character: number,
-    line: number,
-    column: number
-}
+import { TokenPosition } from "../shared/Token";
 
 export class InputStream {
     pos = 0;
@@ -15,11 +11,11 @@ export class InputStream {
 
     }
 
-    public getLastPos(): StreamPosition {
+    public getLastPos(): TokenPosition {
         return this.lastPosition;
     }
 
-    public getCurrentPos(): StreamPosition {
+    public getCurrentPos(): TokenPosition {
         return {
             character: this.pos,
             line: this.line,

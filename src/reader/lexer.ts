@@ -1,27 +1,7 @@
-import InputStream, { StreamPosition } from "./inputstream";
+import { Token, TokenType } from "../shared/Token";
+import InputStream from "./inputstream";
 
-export enum TokenType {
-    // ElementStart,
-    // ElementEnd,
-    // PropertyStart,
-    // PropertyEnd,
-    // Punctuation,
-    // NewLine,
-    // Word,
-    // Space,
-    
-    Text,
-    Space,
-    Keyword,
-    Comment,
-    Control
-}
 
-export interface Token {
-    type: TokenType,
-    value: string,
-    position: StreamPosition
-}
 
 export class Lexer {
     current: Token | null = null;
@@ -109,6 +89,14 @@ export class Lexer {
             }
         }
 
+        if (this.isPipe(ch)) {
+            return {
+                type: TokenType.Pipe,
+                value: ch,
+                position: pos
+            }
+        }
+
         if (this.isControl(ch)) {
             return {
                 type: TokenType.Control,
@@ -142,8 +130,12 @@ export class Lexer {
         }
     }
 
+    isPipe(ch: string) {
+        return "|".indexOf(ch) >= 0; //'\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
+    }
+
     isKeyword(ch: string) {
-        return "[]|():,.+-\"_".indexOf(ch) >= 0; //'\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
+        return "[]():,.+-\"_".indexOf(ch) >= 0; //'\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
     }
 
     isComment(ch: string) {

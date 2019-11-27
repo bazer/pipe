@@ -2,7 +2,7 @@ import { ASTBase, ASTMixin } from "../ast/astbase";
 import { elements } from "..";
 import 'core-js/es6/string';
 import { JSDOM } from "jsdom";
-import { ASTElement } from "../elements/ASTElement";
+import { PipeElement } from "../elements/ASTElement";
 import { TextElement } from "../elements/core/TextElement";
 import { WordElement } from "../elements/core/WordElement";
 import { SpaceElement } from "../elements/core/SpaceElement";
@@ -26,7 +26,7 @@ const { document } = (new JSDOM(`...`)).window;
 // Test.FromHtml()
 
 export abstract class HtmlBase extends ASTBase {
-    constructor(extensionElements: (ASTMixin<ASTElement>)[] = []) {
+    constructor(extensionElements: (ASTMixin<PipeElement>)[] = []) {
         super(extensionElements);
     }
 
@@ -34,7 +34,7 @@ export abstract class HtmlBase extends ASTBase {
         let textElement = new TextElement();
         let savedWord = "";
 
-        textElement.children = (text || "").split("").reduce((acc: ASTElement[], char) => {
+        textElement.children = (text || "").split("").reduce((acc: PipeElement[], char) => {
             let space = char === " ";
             let explicitSpace = char === '\u00A0';
             let newLine = char === "\n" || char === "\r" || char === "\r\n";
@@ -168,11 +168,11 @@ export abstract class HtmlBase extends ASTBase {
         return document.createTextNode(text);
     }
 
-    protected isDOMElementType(element: ASTElement) {
+    protected isDOMElementType(element: PipeElement) {
         return this.resolveDomElement(element) != null;
     }
 
-    public resolveDomElement(element: ASTElement): HTMLElement | Text | Comment {
+    public resolveDomElement(element: PipeElement): HTMLElement | Text | Comment {
         switch (element.elementName) {
             case "d": return document.createElement('div');
             case "p": return document.createElement('p');

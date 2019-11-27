@@ -1,6 +1,6 @@
 import { ASTBase } from "../ast/astbase";
 import { ParserNode, IParserNodeProperty, ParserNodeProperty } from "../shared/parsernode";
-import { ASTElement, ASTElementLayout } from "../elements/ASTElement";
+import { PipeElement, ASTElementLayout } from "../elements/ASTElement";
 import { ASTElementWithValue } from "../elements/ASTElementWithValue";
 import { ASTElementWithAmount } from "../elements/ASTElementWithAmount";
 import { ASTWhitespaceElement } from "../elements/ASTWhitespaceElement";
@@ -10,7 +10,7 @@ export class Writer extends ASTBase {
         super();
     }
 
-    public encode(elements: ASTElement[]) {
+    public encode(elements: PipeElement[]) {
         let nodes = this.getParserNodes(elements);
 
         return this.encodeNodes(nodes);
@@ -88,8 +88,8 @@ export class Writer extends ASTBase {
         .join(" ");
     }
 
-    protected getParserNodes(elements: ASTElement[]) {
-        let lastElement: ASTElement | null = null; //elements.length > 0 ? elements[0] : null;
+    protected getParserNodes(elements: PipeElement[]) {
+        let lastElement: PipeElement | null = null; //elements.length > 0 ? elements[0] : null;
         let list = elements.reduce((acc: ParserNode[], element) => {
             let node = this.resolveParserNode(element);
             node.children = this.getParserNodes(element.children);
@@ -114,7 +114,7 @@ export class Writer extends ASTBase {
     }
 
 
-    protected resolveParserNode(element: ASTElement) {
+    protected resolveParserNode(element: PipeElement) {
         var node = new ParserNode(element.elementName);
         Object.keys(element.arguments).forEach(key => {
             let property = new ParserNodeProperty(key);

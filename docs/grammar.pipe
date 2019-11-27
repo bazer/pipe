@@ -4,25 +4,53 @@ h2|Lexical tokens
 The tokens used by Pipe are as follows.
 
 table|>
-    ^<| Name    <| Values
-    <<| Text    <| word, space
-    <<| Keyword <| '\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_', '<', '>', '^'
-    <<| Comment <| '\%', '\/:', '\:/'
-    <<| Control <| '\n', '\r', '\t'
+  ^ Name    | Values
+    Text    | word, space
+    Keyword | '\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_', '<', '>', '^'
+    Comment | '\%', '\/:', '\:/'
+    Control | '\n', '\r', '\t'
 
 
-ul|>
-    <|Text - word, space
-    <|Keyword - '\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
-    <|Comment - '\%', '\/:', '\:/'
-    <|Control - '\n', '\r', '\t'
+ ul|>
+    > Text - word, space
+    > Keyword - '\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
+    > Comment - '\%', '\/:', '\:/'
+    > Control - '\n', '\r', '\t'
+
+ ul|>
+    > List item one [ul|> 
+        > List item one [ul|>
+            > List item one
+            > List item two
+            > List item three
+            > List item four <]
+        > List item two
+        > List item three
+        > List item four <]
+    > List item two
+    > List item three
+    > List item four
+
+ ul|>
+    > Text - word, space
+    > Keyword - '\[', '\]', '\|', '(', ')', ':', ',', '.', '+', '-', '"', '_'
+    > Comment - '\%', '\/:', '\:/'
+    > Control - '\n', '\r', '\t'
+
+
+table:align(center)|>
+^ :right| Option :left| Description | Column 3
+      > | data        | path to data files to supply the data that will be passed into templates.
+                      | continue row 1
+      > | engine      | engine to be used for processing templates. Handlebars is the default.    | more text
+      > | ext         | extension to be used for dest files.                                      | text
 
 
 
 
-table|>
-    <<|cell1 är väldigt lång <|cell2                <|cell3
-    <<|cell1                 <|[table|<<|cell2 är en tabell]  <|cell3 är halvlång
+ table|>
+    cell1 är väldigt lång | cell2                         | cell3
+    cell1                 | [table|cell2 är en tabell]   | cell3 är halvlång
 
 
 
@@ -40,3 +68,16 @@ table:align(center)|>
 | data   | path to data files to supply the data that will be passed into templates. |
 | engine | engine to be used for processing templates. Handlebars is the default. |
 | ext    | extension to be used for dest files. |
+
+
+[code:"js"|>
+    export class SpaceElement extends ASTWhitespaceElement {
+        constructor(amount = 1, explicit = false) {
+            super("_", amount, explicit);
+            this.canHaveChildren = false;
+        }
+        public charLength() {
+            return this.amount;
+        }
+    }
+:]

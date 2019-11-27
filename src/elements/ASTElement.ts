@@ -1,6 +1,6 @@
 import { AST } from "../ast/ast";
 import { Utils } from "./Utils";
-import { IParserNode } from "../shared/parsernode";
+import { Token } from "../shared/Token";
 
 
 export enum ASTElementLayout {
@@ -32,26 +32,26 @@ export interface Dictionary<T> {
 
 // var classA: ClassA = activator(ClassA);
 
-export interface IASTElement {
+export interface IPipeElement {
     arguments: Dictionary<string>;
-    children: ASTElement[];
+    children: PipeElement[];
     elementName: string;
     layout: ASTElementLayout;
-    allowedParents: (typeof ASTElement)[];
+    allowedParents: (typeof PipeElement)[];
     id: number;
     handlesChildren: boolean;
     canHaveChildren: boolean;
     type: ASTElementType;
     //create: (node: IParserNode) => IASTElement;
-    create(node: IParserNode): IASTElement;
+    create(tokens: Token[]): IPipeElement;
 }
 
-export abstract class ASTElement implements IASTElement {
+export abstract class PipeElement implements IPipeElement {
     public arguments: Dictionary<string> = {};
-    public children: ASTElement[] = [];
+    public children: PipeElement[] = [];
     public elementName: string;
     public layout: ASTElementLayout;
-    public allowedParents: (typeof ASTElement)[] = [];
+    public allowedParents: (typeof PipeElement)[] = [];
     public id: number;
     public handlesChildren = false;
     public canHaveChildren = true;
@@ -63,7 +63,11 @@ export abstract class ASTElement implements IASTElement {
         this.id = Utils.getNewId(); // this.uuidv4();
     }
 
-    public abstract create(node: IParserNode): IASTElement;
+    public abstract create(tokens: Token[]): IPipeElement;
+
+    // protected parseChildren(tokens: Token[]): IPipeElement[] {
+
+    // }
 
     public getArgument(name: string): string | null {
         let value = this.arguments[name];

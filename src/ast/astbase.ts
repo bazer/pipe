@@ -1,5 +1,5 @@
 import { IParserNode, ParserNode } from "../shared/parsernode";
-import { ASTElement, ASTElementLayout } from "../elements/ASTElement";
+import { PipeElement, ASTElementLayout } from "../elements/ASTElement";
 import { ASTElementWithValue } from "../elements/ASTElementWithValue";
 import { ASTElementWithAmount } from "../elements/ASTElementWithAmount";
 import { ASTWhitespaceElement } from "../elements/ASTWhitespaceElement";
@@ -24,7 +24,7 @@ export class ParseError {
 }
 
 export class SearchNode {
-    constructor(public node: Node, public element: ASTElement) {
+    constructor(public node: Node, public element: PipeElement) {
     }
 }
 
@@ -33,7 +33,7 @@ export class ParseResult {
     // public errors: ParseError[];
     // public ast: ASTElement[];
 
-    constructor(public ast: ASTElement[] = [], public errors: ParseError[] = []) {
+    constructor(public ast: PipeElement[] = [], public errors: ParseError[] = []) {
     }
 }
 
@@ -53,22 +53,22 @@ export type ASTMixin<T> = new (...args: any[]) => T;
 export abstract class ASTBase {
 
     errors: ParseError[] = []
-    insertedElements: ASTElement[] = [];
-    extensionElements: (ASTMixin<ASTElement>)[] = [];
+    insertedElements: PipeElement[] = [];
+    extensionElements: (ASTMixin<PipeElement>)[] = [];
 
-    constructor(extensionElements: (ASTMixin<ASTElement>)[] = []) {
+    constructor(extensionElements: (ASTMixin<PipeElement>)[] = []) {
         this.extensionElements = extensionElements;
     }
 
-    protected reportUnallowedNesting(child: ASTElement, parent: ASTElement) {
+    protected reportUnallowedNesting(child: PipeElement, parent: PipeElement) {
         this.errors.push(new ParseError(ParseErrorType.UnallowedNesting, `Element of type '${child.elementName}' inside '${parent.elementName}'`));
     }
 
-    protected reportUnknownElement(element: ASTElement, parent: ASTElement) {
+    protected reportUnknownElement(element: PipeElement, parent: PipeElement) {
         this.errors.push(new ParseError(ParseErrorType.UnknownElement, `Unknown element of type '${element.elementName}' inside '${parent.elementName}'`));
     }
 
-    protected reportEmptyElement(element: ASTElement, parent?: ASTElement) {
+    protected reportEmptyElement(element: PipeElement, parent?: PipeElement) {
         if (parent)
             this.errors.push(new ParseError(ParseErrorType.EmptyElement, `Element of type '${element.elementName}' inside '${parent.elementName}' should not be empty.`));
         else
@@ -83,7 +83,7 @@ export abstract class ASTBase {
         return this.getASTElement(node) != null;
     }
 
-    protected getASTElement(node: IParserNode | string): ASTElement {
+    protected getASTElement(node: IParserNode | string): PipeElement {
         if (typeof node === "string") {
             node = new ParserNode(node);
         }
@@ -148,7 +148,7 @@ export abstract class ASTBase {
         return new UnknownElement(node.name);
     }
 
-    public doSanityCheck(children: ASTElement[], parents: ASTElement[] = []) {
+    public doSanityCheck(children: PipeElement[], parents: PipeElement[] = []) {
         children.forEach(child => {
             if (child.layout == ASTElementLayout.NewLine) {
                 if (parents.length > 0 && !child.allowedParents.some(type => parents.last() instanceof type)) {
@@ -166,7 +166,7 @@ export abstract class ASTBase {
     }
 
 
-    public cloneElement(element: ASTElement, withChildren = false) {
+    public cloneElement(element: PipeElement, withChildren = false) {
         let newElement = this.getASTElement(element.elementName);
         newElement.arguments = element.arguments;
         newElement.id = element.id;
@@ -189,8 +189,8 @@ export abstract class ASTBase {
         return newElement;
     }
 
-    public findElementsWithName(elementName: string, searchElements: ASTElement[], ) {
-        return searchElements.reduce((acc: ASTElement[], element) => {
+    public findElementsWithName(elementName: string, searchElements: PipeElement[], ) {
+        return searchElements.reduce((acc: PipeElement[], element) => {
             if (element.elementName == elementName) {
                 acc.push(element);
             }
@@ -204,11 +204,11 @@ export abstract class ASTBase {
         }, [])
     }
 
-    protected isTextType(element: ASTElement) {
+    protected isTextType(element: PipeElement) {
         return element instanceof WordElement || element instanceof TextElement || element instanceof SpaceElement;
     }
 
-    public static getCharLength(elements: ASTElement[]) {
+    public static getCharLength(elements: PipeElement[]) {
         let count = 0;
         elements.forEach(x => count += x.charLength());
 
